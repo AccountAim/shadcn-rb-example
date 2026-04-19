@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: .
+      target: development
+      args:
+        RAILS_ENV: development
+        BUNDLE_WITHOUT: ""
+    image: shadcnrb-example:dev
+    container_name: shadcnrb-example
+    ports:
+      - "4000:3000"
+    volumes:
+      - .:/rails
+    environment:
+      RAILS_ENV: development
+      BINDING: 0.0.0.0
+    tty: true
+    stdin_open: true
+    healthcheck:
+      # Rails exposes `/up` for load balancer probes. `docker compose up --wait`
+      # watches this to know the server is actually serving, not just booting.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/up || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
