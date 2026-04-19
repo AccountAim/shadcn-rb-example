@@ -12,9 +12,21 @@ services:
       - "4000:3000"
     volumes:
       - .:/rails
+      - ../shadcn-rb:/shadcn-rb
     environment:
       RAILS_ENV: development
       BINDING: 0.0.0.0
+      # Bundler local-gem override: swap the git-fetched shadcn-rb with the
+      # sibling repo at runtime. Dot→"__", dash→"___" is bundler's env-var
+      # name mangling for the config key `local.shadcn-rb`.
+      BUNDLE_LOCAL__SHADCN___RB: /shadcn-rb
+      # Gemfile pins `branch: main` for CI/prod, but the gem dev typically
+      # works on feature branches — don't reject local overrides that land
+      # on a different branch.
+      BUNDLE_DISABLE_LOCAL_BRANCH_CHECK: "true"
+      # Same reason, different check: ignore the lockfile's revision when the
+      # local override's branch has been rebased past it (dev workflow).
+      BUNDLE_DISABLE_LOCAL_REVISION_CHECK: "true"
     tty: true
     stdin_open: true
     healthcheck:
