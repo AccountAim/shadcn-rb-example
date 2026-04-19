@@ -1,0 +1,94 @@
+<% content_for :title, "Installation — shadcnrb" %>
+
+<div class="space-y-6">
+  <div class="space-y-2">
+    <%= sui.h1 "Installation" %>
+    <%= sui.lead "Get shadcnrb running in your Rails 8 app." %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "1. Add the gem" %>
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code># Gemfile
+group :development do
+  gem "shadcn-rb", github: "accountaim/shadcn-rb"
+end</code></pre>
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>bundle install</code></pre>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "2. Run the installer" %>
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>bin/rails g shadcnrb:install</code></pre>
+    <%= sui.p "The installer touches a handful of files — everything lands in your app, version-controlled, owned by you." %>
+
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>Gemfile                                    ← + tailwind_merge (sole universal runtime dep)
+config/
+├── initializers/shadcnrb.rb               ← created: Zeitwerk root + assets path + sui view helper
+└── importmap.rb                           ← + pin_all_from for co-located Stimulus controllers
+app/
+├── javascript/controllers/index.js        ← stock Stimulus eager-load setup (if absent)
+├── assets/tailwind/
+│   ├── application.css                    ← tailwind import + @source globs + @import themes
+│   └── shadcnrb_themes.css                ← created: oklch tokens, .dark overrides, .sui-theme-* presets
+└── components/shadcnrb/                   ← created
+    ├── builder.rb                         ← your subclass of Shadcnrb::BaseBuilder
+    ├── base_builder.rb                    ← infra
+    ├── component_base.rb                  ← infra
+    ├── tailwind_merge.rb                  ← infra
+    ├── view_helpers.rb                    ← infra (provides `sui`)
+    ├── icon/
+    │   ├── component.rb                   ← Shadcnrb::Icon::Component
+    │   └── icons/*.svg                    ← bundled lucide SVGs
+    ├── &lt;component&gt;/
+    │   ├── component.rb                   ← Shadcnrb::&lt;Component&gt;::Component
+    │   ├── style.rb                       ← Tailwind class strings
+    │   └── component_controller.js        ← co-located Stimulus controller, if any
+    └── styles/                            ← optional: Shadcnrb::Styles::* subclasses</code></pre>
+    <%= sui.p do %>
+      Exact diff:
+      <%= sui.link_to "harness…adopt-patch",
+                      "https://github.com/AccountAim/shadcn-rb-example/compare/harness...adopt-patch",
+                      variant: :underline, target: "_blank" %>
+      — this repo keeps <%= sui.code "main" %> at four commits so the
+      adoption change is one GitHub compare view.
+    <% end %>
+    <%= sui.p do %>
+      The installer also auto-runs <%= sui.code "shadcnrb:component icon" %>
+      so <%= sui.code "sui.icon(:check)" %> works immediately.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "3. Install components" %>
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>bin/rails g shadcnrb:component button
+bin/rails g shadcnrb:component dialog
+bin/rails g shadcnrb:component sidebar</code></pre>
+    <%= sui.p do %>
+      Each component copies the whole
+      <%= sui.code "lib/shadcnrb/<name>/" %> dir (Ruby module +
+      sibling <%= sui.code "*_controller.js" %>, if any) into
+      <%= sui.code "app/components/shadcnrb/<name>/" %> and appends an
+      <%= sui.code "include" %> line to your <%= sui.code "Shadcnrb::Builder" %>.
+      Stimulus picks the controller up via the
+      <%= sui.code "pin_all_from" %> in <%= sui.code "config/importmap.rb" %>
+      under the identifier <%= sui.code "shadcnrb--<name>--component" %>.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "4. Use them" %>
+    <pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;%= sui.button "Save", variant: :default %&gt;</code></pre>
+    <%= sui.p "That's it. See the sidebar for per-component docs and live examples." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Requirements" %>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li>Ruby ≥ 3.2</li>
+      <li>Rails ≥ 7.1 (Rails 8 recommended)</li>
+      <li>Tailwind CSS v4</li>
+      <li><%= sui.code "importmap-rails" %> (default for Rails 8)</li>
+    </ul>
+  </div>
+</div>

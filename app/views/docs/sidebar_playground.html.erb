@@ -1,0 +1,205 @@
+<%
+  variant      = params[:variant].presence_in(%w[sidebar floating inset])&.to_sym || :inset
+  collapsible  = params[:collapsible].presence_in(%w[offcanvas icon none])&.to_sym || :icon
+  side         = params[:side].presence_in(%w[left right])&.to_sym || :left
+%>
+
+<div data-controller="sidebar-playground" class="h-svh overflow-hidden">
+  <%= sui.sidebar_wrapper(state: preferences["state"], data: { "sidebar-playground-target": "sidebar" }) do |s| %>
+    <%= s.sidebar(side: side, variant: variant, collapsible: collapsible) do %>
+      <%= s.header do %>
+        <div class="flex items-center gap-2 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">A</div>
+          <div class="min-w-0 group-data-[collapsible=icon]:hidden">
+            <p class="truncate text-sm font-semibold">Acme Inc</p>
+            <p class="truncate text-xs text-muted-foreground">Enterprise</p>
+          </div>
+        </div>
+        <div class="px-2 group-data-[collapsible=icon]:hidden">
+          <%= s.input placeholder: "Search…" %>
+        </div>
+      <% end %>
+
+      <%= s.content do %>
+        <%= s.group do %>
+          <%= s.group_label "Platform" %>
+          <%= s.group_action(aria_label: "Add platform") { sui.icon(:"chevron-right") } %>
+          <%= s.group_content do %>
+            <%= s.menu do %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "Dashboard", docs_sidebar_playground_path(variant: variant, collapsible: collapsible, side: side), tooltip: "Dashboard", icon: :home %>
+                <%= s.menu_badge "12" %>
+              <% end %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "Projects", docs_sidebar_playground_projects_path, tooltip: "Projects", icon: :settings %>
+                <%= s.menu_action(aria_label: "More") { sui.icon(:"chevron-down") } %>
+                <%= s.menu_sub do %>
+                  <%= s.menu_sub_item do %>
+                    <%= s.menu_sub_button "Active", docs_sidebar_playground_projects_path %>
+                  <% end %>
+                  <%= s.menu_sub_item do %>
+                    <%= s.menu_sub_button "Archived", "#" %>
+                  <% end %>
+                <% end %>
+              <% end %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "Team", docs_sidebar_playground_team_path, tooltip: "Team", icon: :user %>
+                <%= s.menu_badge "3" %>
+              <% end %>
+              <%= s.collapsible open: true, flyout: true do |c| %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Docs", tooltip: "Docs", collapsible: true, icon: :folder do %>
+                    <%= c.chevron %>
+                  <% end %>
+                <% end %>
+                <%= c.content do %>
+                  <%= s.menu_sub do %>
+                    <%= s.menu_sub_item { s.menu_sub_button "Introduction", "#", icon: :"book-open" } %>
+                    <%= s.menu_sub_item { s.menu_sub_button "Installation", "#", icon: :download } %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= s.separator %>
+
+        <%= s.group do %>
+          <%= s.group_label "Loading…" %>
+          <%= s.group_content do %>
+            <%= s.menu do %>
+              <% 3.times do %>
+                <%= s.menu_item { s.menu_skeleton(show_icon: true) } %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= s.separator %>
+
+        <%= s.group do %>
+          <%= s.group_label "Settings" %>
+          <%= s.group_content do %>
+            <%= s.menu do %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "General", "#", tooltip: "General", icon: :settings %>
+              <% end %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "Billing (sm)", "#", size: :sm, icon: :check %>
+              <% end %>
+              <%= s.menu_item do %>
+                <%= s.menu_button "Notifications (lg)", "#", size: :lg, icon: :"circle-alert" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= s.footer do %>
+        <%= s.menu do %>
+          <%= s.menu_item do %>
+            <%= sui.dropdown_menu class: "w-full", side: :top, content: { class: "w-56" } do |m| %>
+              <%= m.trigger do %>
+                <%= s.menu_button size: :lg, dropdown_trigger: true do %>
+                  <%= sui.avatar size: :sm do |a| %>
+                    <%= a.fallback "JD" %>
+                  <% end %>
+                  <div class="flex-1 text-left">
+                    <p class="truncate text-sm font-medium leading-none">John Doe</p>
+                    <p class="truncate text-xs text-muted-foreground mt-0.5">john@acme.com</p>
+                  </div>
+                  <%= sui.icon :"chevrons-up-down", class: "ml-auto size-4 opacity-60" %>
+                <% end %>
+              <% end %>
+              <%= m.label "My Account" %>
+              <%= m.separator %>
+              <%= m.item "Account",       "#" %>
+              <%= m.item "Billing",       "#" %>
+              <%= m.item "Notifications", "#" %>
+              <%= m.separator %>
+              <%= m.item "Log out", "#" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= s.inset do %>
+      <%= s.inset_header do %>
+        <%= s.trigger %>
+        <span class="text-sm font-medium">Sidebar playground</span>
+        <div class="ml-auto flex items-center gap-3">
+          <span class="text-xs text-muted-foreground hidden lg:inline">path: <code><%= request.path %></code></span>
+          <%= link_to "← Back to docs", docs_component_path("sidebar"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+          <%= sui.theme_switcher %>
+        </div>
+      <% end %>
+      <%= s.inset_content do %>
+        <div class="px-6 py-6 max-w-4xl mx-auto w-full space-y-6">
+          <%= sui.h1 "Sidebar playground" %>
+          <%= sui.lead "Swap variant, collapsible mode, and side on the fly. Variant changes reload (full re-render); mode/side/state flip client-side." %>
+
+          <div class="rounded-lg border bg-muted/30 p-4 space-y-3">
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="font-medium text-muted-foreground w-16">Variant:</span>
+              <% %w[sidebar floating inset].each do |v| %>
+                <%= sui.link_to v.titleize, docs_sidebar_playground_path(variant: v, collapsible: collapsible, side: side),
+                      variant: (variant.to_s == v ? :default : :outline), size: :sm %>
+              <% end %>
+              <span class="ml-2 text-muted-foreground">(reloads)</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="font-medium text-muted-foreground w-16">Mode:</span>
+              <% %w[offcanvas icon none].each do |m| %>
+                <button type="button"
+                        class="rounded-md border px-3 py-1.5 text-xs cursor-pointer hover:bg-accent data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground data-[selected=true]:border-primary"
+                        data-collapsible="<%= m %>"
+                        data-selected="<%= collapsible.to_s == m %>"
+                        data-action="click->sidebar-playground#setCollapsible">
+                  <%= m %>
+                </button>
+              <% end %>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="font-medium text-muted-foreground w-16">Side:</span>
+              <% %w[left right].each do |side_opt| %>
+                <button type="button"
+                        class="rounded-md border px-3 py-1.5 text-xs cursor-pointer hover:bg-accent data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground data-[selected=true]:border-primary"
+                        data-side="<%= side_opt %>"
+                        data-selected="<%= side.to_s == side_opt %>"
+                        data-action="click->sidebar-playground#setSide">
+                  <%= side_opt %>
+                </button>
+              <% end %>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 text-xs pt-1 border-t">
+              <button type="button"
+                      class="rounded-md border bg-background px-3 py-1.5 text-xs cursor-pointer hover:bg-accent"
+                      data-action="click->sidebar-playground#toggle">
+                Toggle collapse
+              </button>
+              <span class="ml-auto font-mono text-muted-foreground" data-sidebar-playground-target="state"></span>
+            </div>
+          </div>
+
+          <%= sui.separator %>
+
+          <div class="space-y-2 text-sm leading-relaxed">
+            <p><strong>Try this:</strong></p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Click <strong>icon</strong> mode, then hit <strong>Toggle collapse</strong> — sidebar shrinks to icon rail, labels hide, sub-menus collapse. Hover <strong>Docs</strong> on the rail to get its sub-menu as a flyout.</li>
+              <li>Click <strong>offcanvas</strong>, collapse — sidebar slides fully out of view.</li>
+              <li>Click <strong>floating</strong> or <strong>inset</strong> — page reloads with new variant visual (detached card vs inset content).</li>
+              <li>Active state on <strong>Dashboard / Projects / Team</strong> follows <code>current_page?</code>.</li>
+              <li>Badges (12, 3), group action (→), menu action (⌄), and search input all visible when expanded.</li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

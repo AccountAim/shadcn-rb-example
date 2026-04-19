@@ -1,0 +1,56 @@
+<% content_for :title, "Introduction — shadcnrb" %>
+
+<div class="space-y-6">
+  <div class="space-y-2">
+    <%= sui.h1 "Introduction" %>
+    <%= sui.lead "shadcn/ui components for Rails, exposed as an ActionView builder. You own the code. Real Rails helpers underneath." %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "What is this?" %>
+    <%= sui.p do %>
+      <%= sui.code "shadcnrb" %> is a Ruby port of
+      <a href="https://ui.shadcn.com" class="underline underline-offset-4 font-medium" target="_blank">shadcn/ui</a>,
+      built for Rails (7.1+) with Tailwind v4. Components are plain Ruby modules mixed into a
+      <%= sui.code "Shadcnrb::Builder" %> object,
+      accessible in every view as <%= sui.code "sui" %>.
+    <% end %>
+    <%= sui.p do %>
+      Under the hood, every actionable component wraps the corresponding Rails helper —
+      so <%= sui.code "sui.button_to" %> is a real
+      <%= sui.code "button_to" %> with CSRF + Turbo,
+      <%= sui.code "sui.link_to" %> is a real
+      <%= sui.code "link_to" %>, and so on.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Philosophy" %>
+    <ul class="space-y-2 text-sm leading-relaxed">
+      <li><strong>You own the code.</strong> The installer copies components into your app — edit them however you like.</li>
+      <li><strong>Rails-native.</strong> Every component mirrors the Rails helper it wraps. No custom <%= sui.code "href:" %> kwarg; use real route helpers.</li>
+      <li><strong>One dir per component.</strong> Markup, Tailwind classes, and Stimulus controller all live together in <%= sui.code "app/components/shadcnrb/<name>/" %>.</li>
+      <li><strong>Portal pattern for overlays.</strong> Toasts, dialogs, drawers inject into <%= sui.code "document.body" %> — no wrapping controllers.</li>
+    </ul>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Quick example" %>
+    <%= live_example do %>
+      <%= sui.button "Save", variant: :default %>
+    <% end %>
+    <%= live_example do %>
+      <%= sui.button_to "Delete", "#", method: :delete, variant: :destructive %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Next steps" %>
+    <ul class="space-y-1 text-sm">
+      <li>→ <%= link_to "Installation", docs_installation_path, class: "underline underline-offset-4 font-medium" %></li>
+      <li>→ <%= link_to "Browse components", docs_component_path("button"), class: "underline underline-offset-4 font-medium" %></li>
+    </ul>
+  </div>
+</div>

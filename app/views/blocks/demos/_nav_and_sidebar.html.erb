@@ -1,0 +1,285 @@
+<% branded_link    = "bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" %>
+<% branded_trigger = "#{branded_link} data-[state=open]:bg-primary-foreground/10 data-[state=open]:text-primary-foreground" %>
+<div class="flex h-svh flex-col">
+  <header class="flex h-14 shrink-0 items-center gap-6 bg-primary px-6 text-primary-foreground">
+    <div class="flex items-center gap-2">
+      <div class="flex h-7 w-7 items-center justify-center rounded-md bg-primary-foreground text-primary text-sm font-bold">A</div>
+      <span class="font-semibold">Acme</span>
+    </div>
+
+    <%= sui.navigation_menu do |nav| %>
+      <%= nav.item do %>
+        <%= nav.trigger class: branded_trigger do %>
+          Product
+          <%= sui.icon :"chevron-down", class: "size-4 opacity-70 transition-transform group-data-[state=open]:rotate-180" %>
+        <% end %>
+        <div class="grid gap-1 w-64">
+          <% [
+            ["Overview",     "Everything Acme can do."],
+            ["Features",     "Individual capabilities in depth."],
+            ["Integrations", "Connect with the tools your team uses."],
+            ["What's new",   "Recent ships and roadmap."]
+          ].each do |(title, desc)| %>
+            <%= link_to "#", class: "block rounded-md p-2 hover:bg-accent hover:text-accent-foreground" do %>
+              <div class="text-sm font-medium leading-none"><%= title %></div>
+              <p class="mt-1 text-xs text-muted-foreground line-clamp-2"><%= desc %></p>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= nav.item { nav.link "Docs",      "#", class: branded_link } %>
+      <%= nav.item { nav.link "Pricing",   "#", class: branded_link } %>
+      <%= nav.item { nav.link "Changelog", "#", class: branded_link } %>
+    <% end %>
+
+    <div class="ml-auto flex items-center gap-3">
+      <%= sui.link_to "Sign in", "#", variant: :secondary, size: :sm %>
+      <%= sui.avatar size: :sm do |a| %>
+        <%= a.fallback "JD" %>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="flex-1 min-h-0">
+    <%= sui.sidebar_wrapper bounded: true do |s| %>
+      <%= s.sidebar variant: :inset, collapsible: :icon do %>
+        <%= s.content do %>
+          <%= s.group do %>
+            <%= s.group_label "Workspace" %>
+            <%= s.group_content do %>
+              <%= s.menu do %>
+                <% [["Dashboard", :home, true], ["Projects", :folder, false], ["Search", :search, false]].each do |(label, ic, active)| %>
+                  <%= s.menu_item do %>
+                    <%= s.menu_button label, "#", active: active, tooltip: label, icon: ic %>
+                  <% end %>
+                <% end %>
+
+                <!-- Sub-menu collapsible, open by default; a flyout on the icon rail. -->
+                <%= s.collapsible open: true, flyout: true do |c| %>
+                  <%= s.menu_item do %>
+                    <%= s.menu_button "Docs", tooltip: "Docs", collapsible: true, icon: :folder do %>
+                      <%= c.chevron %>
+                    <% end %>
+                  <% end %>
+                  <%= c.content do %>
+                    <%= s.menu_sub do %>
+                      <%= s.menu_sub_item { s.menu_sub_button "Introduction", "#", icon: :"book-open" } %>
+                      <%= s.menu_sub_item { s.menu_sub_button "Installation", "#", icon: :download } %>
+                      <%= s.menu_sub_item { s.menu_sub_button "Components",   "#", icon: :blocks } %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+
+                <!-- Sub-menu collapsible, closed by default. -->
+                <%= s.collapsible open: false, flyout: true do |c| %>
+                  <%= s.menu_item do %>
+                    <%= s.menu_button "Help", tooltip: "Help", collapsible: true, icon: :"circle-alert" do %>
+                      <%= c.chevron %>
+                    <% end %>
+                  <% end %>
+                  <%= c.content do %>
+                    <%= s.menu_sub do %>
+                      <%= s.menu_sub_item { s.menu_sub_button "Support",  "#" } %>
+                      <%= s.menu_sub_item { s.menu_sub_button "Feedback", "#" } %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= s.separator %>
+
+          <!-- Whole group collapsible, open by default. Label IS the trigger. -->
+          <%= sui.collapsible open: true do |c| %>
+            <%= s.group do %>
+              <%= s.group_label "Team", collapsible: true do %>
+                <%= c.chevron %>
+              <% end %>
+              <%= c.content do %>
+                <%= s.group_content do %>
+                  <%= s.menu do %>
+                    <% [["Members", :user], ["Settings", :settings]].each do |(label, ic)| %>
+                      <%= s.menu_item do %>
+                        <%= s.menu_button label, "#", tooltip: label, icon: ic %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <!-- Whole group collapsible, closed by default. -->
+          <%= sui.collapsible open: false do |c| %>
+            <%= s.group do %>
+              <%= s.group_label "Admin", collapsible: true do %>
+                <%= c.chevron %>
+              <% end %>
+              <%= c.content do %>
+                <%= s.group_content do %>
+                  <%= s.menu do %>
+                    <% [["Billing", :"circle-alert"], ["Audit log", :folder]].each do |(label, ic)| %>
+                      <%= s.menu_item do %>
+                        <%= s.menu_button label, "#", tooltip: label, icon: ic %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= s.footer do %>
+          <%= s.menu do %>
+            <%= s.menu_item do %>
+              <%= sui.dropdown_menu class: "w-full", side: :top, content: { class: "w-56" } do |m| %>
+                <%= m.trigger do %>
+                  <%= s.menu_button size: :lg, dropdown_trigger: true do %>
+                    <%= sui.avatar size: :sm do |a| %>
+                      <%= a.fallback "SC" %>
+                    <% end %>
+                    <div class="flex-1 text-left">
+                      <p class="truncate text-sm font-medium leading-none">shadcn</p>
+                      <p class="truncate text-xs text-muted-foreground mt-0.5">m@example.com</p>
+                    </div>
+                    <%= sui.icon :"chevrons-up-down", class: "ml-auto size-4 opacity-60" %>
+                  <% end %>
+                <% end %>
+                <%= m.label "My Account" %>
+                <%= m.separator %>
+                <%= m.item "Upgrade to Pro", "#" %>
+                <%= m.separator %>
+                <%= m.item "Account",       "#" %>
+                <%= m.item "Billing",       "#" %>
+                <%= m.item "Notifications", "#" %>
+                <%= m.separator %>
+                <%= m.item "Log out", "#" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= s.inset do %>
+        <%= s.inset_header do %>
+          <%= s.trigger %>
+          <%= sui.separator orientation: :vertical, class: "mx-2 h-4" %>
+          <%= sui.breadcrumb do |bc| %>
+            <%= bc.list do %>
+              <%= bc.item { bc.link "Workspace", "#" } %>
+              <%= bc.separator %>
+              <%= bc.item { bc.page "Dashboard" } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= s.inset_content do %>
+          <div class="p-6 space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <%= sui.h2 "Overview" %>
+                <%= sui.muted "What's happening across Acme this week." %>
+              </div>
+              <div class="flex items-center gap-2">
+                <%= sui.drawer do |drawer| %>
+                  <%= drawer.trigger { sui.button "Filters", variant: :outline } %>
+                  <%= drawer.header do %>
+                    <%= drawer.title "Filters" %>
+                    <%= drawer.description "Narrow down what the overview shows." %>
+                  <% end %>
+                  <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="flex items-center justify-between">
+                      <%= sui.label "Only my projects" %>
+                      <%= sui.switch name: "mine" %>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <%= sui.label "Include archived" %>
+                      <%= sui.switch name: "archived" %>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <%= sui.label "Overdue tasks only" %>
+                      <%= sui.switch name: "overdue", checked: true %>
+                    </div>
+                  </div>
+                  <%= drawer.footer do %>
+                    <%= sui.button "Apply" %>
+                  <% end %>
+                <% end %>
+
+                <%= sui.dialog do |dialog| %>
+                  <%= dialog.trigger { sui.button "New project" } %>
+                  <%= dialog.header do %>
+                    <%= dialog.title "New project" %>
+                    <%= dialog.description "Give it a name; you can add members after." %>
+                  <% end %>
+                  <div class="grid gap-4 py-2">
+                    <div class="grid gap-1.5">
+                      <%= sui.label "Name", for: "project-name" %>
+                      <%= sui.input id: "project-name", placeholder: "Apollo" %>
+                    </div>
+                    <div class="grid gap-1.5">
+                      <%= sui.label "Description", for: "project-description" %>
+                      <%= sui.textarea id: "project-description", placeholder: "What is this project about?" %>
+                    </div>
+                  </div>
+                  <%= dialog.footer do %>
+                    <%= dialog.close "Cancel", variant: :outline %>
+                    <%= sui.button "Create project" %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+
+            <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-3" do %>
+              <% [["Active projects", "12", "+2"], ["Open tasks", "47", "-5"], ["Team members", "8", "+1"]].each do |(label, value, delta)| %>
+                <%= sui.card(class: "p-4") do %>
+                  <%= sui.muted label %>
+                  <div class="mt-1 flex items-baseline gap-2">
+                    <p class="text-2xl font-semibold"><%= value %></p>
+                    <span class="text-xs text-muted-foreground"><%= delta %> this week</span>
+                  </div>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <%= sui.card do |c| %>
+              <%= c.header do %>
+                <%= c.title "Recent activity" %>
+                <%= c.description "Last 7 days across all projects." %>
+              <% end %>
+              <%= c.content do %>
+                <%= sui.table do |t| %>
+                  <%= t.header do %>
+                    <%= t.row do %>
+                      <%= t.head "Project" %>
+                      <%= t.head "Task" %>
+                      <%= t.head "Assignee" %>
+                      <%= t.head "Updated" %>
+                    <% end %>
+                  <% end %>
+                  <%= t.body do %>
+                    <% [
+                      ["Apollo", "Refactor auth middleware", "Rin",  "2h ago"],
+                      ["Orion",  "Design review: settings",  "Ada",  "5h ago"],
+                      ["Helios", "Ship v2.1 release",         "Joel", "1d ago"],
+                      ["Nyx",    "Backfill usage metrics",    "Mira", "2d ago"]
+                    ].each do |project, task, who, when_| %>
+                      <%= t.row do %>
+                        <%= t.cell project %>
+                        <%= t.cell task %>
+                        <%= t.cell who %>
+                        <%= t.cell when_ %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

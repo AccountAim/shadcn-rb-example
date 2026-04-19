@@ -1,0 +1,21 @@
+<% dialog = sui.dialog_proxy %>
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+  <%= dialog.header do %>
+    <%= dialog.title "Profile loaded" %>
+    <%= dialog.description "This content was fetched lazily after the dialog opened." %>
+  <% end %>
+  <div class="grid gap-4 py-4">
+    <div class="grid gap-1.5">
+      <%= sui.label "Name", for_id: "lazy-name" %>
+      <%= sui.input id: "lazy-name", value: "John Doe" %>
+    </div>
+    <div class="grid gap-1.5">
+      <%= sui.label "Email", for_id: "lazy-email" %>
+      <%= sui.input id: "lazy-email", type: "email", value: "john@acme.com" %>
+    </div>
+  </div>
+  <%= dialog.footer do %>
+    <%= dialog.close "Cancel", variant: :outline %>
+    <%= dialog.close "Save changes" %>
+  <% end %>
+</turbo-frame>

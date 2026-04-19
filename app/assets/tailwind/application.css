@@ -4,3 +4,46 @@
 @source "../../javascript/**/*.js";
 
 @import "./shadcnrb_themes.css";
+
+@layer base {
+  /* WebKit gets the pseudo-elements — the only way to drop its arrow buttons, and ignored by
+     Chrome once the standard properties are set — so the two forms are kept apart. */
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    *:hover,
+    :hover > * {
+      scrollbar-color: color-mix(in oklab, var(--color-muted-foreground) 70%, transparent) transparent;
+    }
+  }
+
+  @supports selector(::-webkit-scrollbar) {
+    *::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    *::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border-radius: 9999px;
+      background: transparent;
+    }
+
+    /* `:hover > *`: a bar also shows while the pane's parent is hovered, so a fixed header or a
+       sidebar footer beside the scrolling part counts as hovering it. */
+    *:hover::-webkit-scrollbar-thumb,
+    :hover > *::-webkit-scrollbar-thumb {
+      background: color-mix(in oklab, var(--color-muted-foreground) 70%, transparent);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background: var(--color-muted-foreground);
+    }
+  }
+}

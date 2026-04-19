@@ -1,0 +1,40 @@
+<% content_for :title, "Checkbox — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Checkbox" %>
+    <%= sui.lead "A native <input type=checkbox> styled with appearance-none + a checked background SVG. Works with form submissions and Rails check_box_tag." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "checkbox" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= live_example do %>
+      <%= sui.layout.row gap: 2 do %>
+        <%= sui.checkbox id: "terms", name: "terms" %>
+        <%= sui.label "Accept the terms and conditions", for: "terms" %>
+      <% end %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 2 do %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= sui.checkbox id: "email", name: "email", checked: true %>
+          <%= sui.label "Email notifications", for: "email" %>
+        <% end %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= sui.checkbox id: "sms", name: "sms" %>
+          <%= sui.label "SMS notifications", for: "sms" %>
+        <% end %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= sui.checkbox id: "push", name: "push", disabled: true %>
+          <%= sui.label "Push notifications (disabled)", for: "push" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

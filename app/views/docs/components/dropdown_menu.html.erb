@@ -1,0 +1,260 @@
+<% content_for :title, "Dropdown Menu — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Dropdown Menu" %>
+    <%= sui.lead "Displays a list of actions or links that appear below a trigger button. The panel renders in the browser's top layer, so no container can clip it." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "dropdown_menu" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      The block is the menu; <%= sui.code "m.trigger" %> marks what opens it —
+      you write that element yourself with any helper, the same shape as
+      <%= sui.code "sui.tooltip" %> and <%= sui.code "sui.hover_card" %>.
+      Open/close behaviour is handled by the bundled Stimulus controller.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger { sui.button "Open menu", variant: :outline } %>
+        <%= m.label "My Account" %>
+        <%= m.separator %>
+        <%= m.item "Profile",  icon: :user %>
+        <%= m.item "Settings", icon: :settings %>
+        <%= m.separator %>
+        <%= m.item "Sign out", icon: :x %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With links" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "href:" %> to <%= sui.code "m.item" %> to render an <%= sui.code "<a>" %> tag instead of a button.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger { sui.button "Navigate" } %>
+        <%= m.item "Dashboard", href: "#" %>
+        <%= m.item "Billing",   href: "#" %>
+        <%= m.separator %>
+        <%= m.item "Log out",   href: "#" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Non-GET items" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "method:" %> and the item renders a CSRF-safe
+      <%= sui.code "button_to" %> form. <%= sui.code "icon:" %> works the
+      same as on link items. This one hits the demo delete endpoint and
+      shows a toast.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger { sui.button "Chart actions", variant: :outline } %>
+        <%= m.item "Open", "#", icon: :folder %>
+        <%= m.separator %>
+        <%= m.item "Delete chart", destroy_demo_chart_path(2), method: :delete, icon: :x %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sides and alignment" %>
+    <%= sui.muted do %>
+      <%= sui.code "side:" %> / <%= sui.code "align:" %> place the panel
+      (defaults <%= sui.code ":bottom" %> / <%= sui.code ":start" %>); it flips
+      to the opposite side when the viewport runs out of room. Panel options
+      ride in <%= sui.code "content:" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu align: :end, content: { class: "w-44" } do |m| %>
+        <%= m.trigger { sui.button "Aligned end", variant: :outline } %>
+        <%= m.item "Profile", "#" %>
+        <%= m.item "Sign out", "#" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Nested sub-menu" %>
+    <%= sui.muted do %>
+      <%= sui.code "m.sub do |sub|" %> spawns a nested menu with the same
+      slot shape: <%= sui.code "sub.trigger" %> is a regular-looking item with
+      a right-chevron, and the rest of the block is the sub panel, floated to
+      the right (flipping left near the viewport edge). Opens on hover, closes
+      after a short delay when the pointer leaves both. Clicking a leaf item
+      cascades-closes every ancestor.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger { sui.button "File", variant: :outline } %>
+        <%= m.item "New file",  "#" %>
+        <%= m.item "Open…",     "#" %>
+        <%= m.sub do |sub| %>
+          <%= sub.trigger "Share" %>
+          <%= m.item "Email link", "#" %>
+          <%= m.item "Copy link",  "#" %>
+          <%= m.sub do |deeper| %>
+            <%= deeper.trigger "More…" %>
+            <%= m.item "Slack",   "#" %>
+            <%= m.item "Discord", "#" %>
+          <% end %>
+        <% end %>
+        <%= m.separator %>
+        <%= m.item "Save",     "#" %>
+        <%= m.item "Save as…", "#" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Composition — scoped helpers inside" %>
+    <%= sui.muted do %>
+      Pass a block with a scope arg (<%= sui.code "m.item do |i|" %>) and
+      use <%= sui.code "i.link_to" %> / <%= sui.code "i.button_to" %> inside.
+      The item's scope tells <%= sui.code "link_to" %> /
+      <%= sui.code "button_to" %> they're in a non-top-level context, so they
+      default to <%= sui.code "variant: :bare" %> automatically — no stacked
+      button visuals over the row styling. CSS on
+      <%= sui.code "m.item" %>
+      (<%= sui.code "[&>a]:flex-1 [&>form]:flex-1" %>) makes the inner element
+      fill the row so clicks land anywhere.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger { sui.button "Account" } %>
+        <%= m.item do |i| %>
+          <%= i.link_to "Profile", "#", icon: :user %>
+        <% end %>
+        <%= m.item do |i| %>
+          <%= i.link_to "Settings", "#", icon: :settings %>
+        <% end %>
+        <%= m.separator %>
+        <%= m.item do |i| %>
+          <%= i.button_to "Sign out", "#", method: :delete, icon: :x %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Lazy-loaded items" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "src:" %> and the menu fetches its items on first
+      open via a Turbo Frame — handy for per-row action menus in long
+      tables. Same options as <%= sui.code "sui.dialog" %>:
+      <%= sui.code "reload:" %> re-fetches every open,
+      <%= sui.code "loading:" %> (or the block body after the trigger) is
+      the loading state. The lazy partial reaches <%= sui.code "m.item" %>
+      etc. through <%= sui.code "sui.dropdown_menu_proxy" %>, and the same
+      shape works as a kwarg: <%= sui.code "sui.button icon: :ellipsis, dropdown_menu: { src: ... }" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu src: lazy_dropdown_items_path, content: { class: "w-48" } do |m| %>
+        <%= m.trigger { sui.button "Row actions", variant: :outline } %>
+        <div class="grid gap-1" aria-hidden="true">
+          <%= sui.skeleton class: "h-8" %>
+          <%= sui.skeleton class: "h-8" %>
+          <%= sui.skeleton class: "h-8" %>
+        </div>
+      <% end %>
+
+      <%= sui.button icon: :ellipsis, variant: :ghost, "aria-label": "More",
+            dropdown_menu: { src: lazy_dropdown_items_path, content: { class: "w-48" } } %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Search inside the menu" %>
+    <%= sui.muted do %>
+      A search box at the top of the panel needs no JavaScript to take
+      focus: give the input a plain <%= sui.code "autofocus" %> attribute.
+      Browsers skip <%= sui.code "autofocus" %> inside a closed popover at
+      page load, so it never steals focus; it acts when the panel opens
+      (the Popover API's focusing steps on <%= sui.code "showPopover()" %>)
+      or, for a lazy menu, when Turbo renders the frame that contains it.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- Inline: the input is in the page, focused when the panel opens. -->
+      <%= sui.dropdown_menu content: { class: "w-56" } do |m| %>
+        <%= m.trigger { sui.button "Assign to…", variant: :outline } %>
+        <div class="p-1">
+          <%= sui.input placeholder: "Find…", autofocus: true, class: "h-8" %>
+        </div>
+        <%= m.separator %>
+        <%= m.item "Ada",  "#" %>
+        <%= m.item "Rin",  "#" %>
+        <%= m.item "Joel", "#" %>
+      <% end %>
+
+      <!-- Lazy: the input arrives with the frame, focused when it renders. -->
+      <%= sui.dropdown_menu src: lazy_dropdown_search_path, content: { class: "w-56" } do |m| %>
+        <%= m.trigger { sui.button "Move to project…", variant: :outline } %>
+        <div class="grid gap-1" aria-hidden="true">
+          <%= sui.skeleton class: "h-8" %>
+          <%= sui.skeleton class: "h-8" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Adopting an existing element as the panel" %>
+    <%= sui.muted do %>
+      <%= sui.code "panel:" %> is the third way to supply the panel, next to
+      the inline block and <%= sui.code "src:" %>: the id of an element
+      rendered elsewhere, usually inside the block. While
+      <%= sui.code "enabled:" %> holds (the default) the controller takes it
+      over as a top-layer popover with the panel look and placement; with
+      <%= sui.code "enabled: false" %> it renders inline again and the
+      trigger does nothing. Flip the
+      <%= sui.code "data-shadcnrb--dropdown-menu--component-enabled-value" %>
+      attribute to switch at runtime. <%= sui.code "sui.hover_card" %> takes
+      the same option for hover-opened panels — that is how
+      <%= sui.link_to "the sidebar", docs_component_path("sidebar") %> shows a
+      collapsed group's sub-items as a flyout from the icon rail.
+    <% end %>
+
+    <% code = <<~RUBY
+      sui.collapsible open: true, content: { id: "docs" },
+                      dropdown_menu: { panel: "docs", side: :right, align: :start } do |c|
+        c.trigger { sui.button "Docs", variant: :ghost }
+        c.content do
+          # rendered inline while enabled: false, as the flyout otherwise
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.dropdown_menu</code>", "<code>side:, align:, src:, reload:, loading:, panel:, enabled:, content:, **opts</code>", "<code>:bottom</code> / <code>:start</code>", "Wrapper; the block body is the menu panel. Mounts the <code>shadcnrb--dropdown-menu--component</code> controller (a subclass of the shared anchored engine) and owns the click/Esc wiring. <code>**opts</code> land on the wrapper, <code>content:</code> on the panel. <code>src:</code> lazy-loads the items via Turbo Frame. <code>panel:</code> adopts an element by id as the panel while <code>enabled:</code> (default true) holds; only <code>content: { class: }</code> applies then."],
+      ["<code>m.trigger</code>", "<code>&amp;block</code>", "—", "Marks which part of the block is the trigger; everything else is the panel. Your markup, verbatim — click-to-toggle is bound on the wrapper, so the element keeps its own behaviour. Hoisted to the top of the wrapper, so its position in the block doesn't matter."],
+      ["<code>m.label(name)</code>", "—", "—", "Non-interactive section heading inside the panel."],
+      ["<code>m.separator</code>", "—", "—", "Horizontal divider line between groups of items."],
+      ["<code>m.item(name)</code>", "<code>href:, method:, icon:, &block</code>", "<code>nil</code>", "Interactive row. Shortcut renders <code>&lt;button&gt;</code> (or <code>&lt;a&gt;</code> when <code>href:</code> is given, or a <code>button_to</code> form when <code>method:</code> is given). Block form renders a <code>&lt;div role=\"menuitem\"&gt;</code> wrapper — put <code>link_to</code> / <code>button_to</code> inside. Closes menu on click."],
+      ["<code>m.sub</code>", "<code>side:, align:, content:, &amp;block</code>", "<code>:right</code> / <code>:start</code>", "Nested menu, same slot shape: <code>sub.trigger(name)</code> renders the chevroned row, the rest of the block is the sub panel."],
+    ] %>
+  </div>
+</div>

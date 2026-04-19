@@ -1,0 +1,5 @@
+<div class="space-y-4">
+  <iframe src="<%= block_preview_path(id) %>" title="<%= id.humanize %> preview"
+          class="w-full rounded-xl border bg-background" style="height: <%= height %>px"></iframe>
+  <%= sui.codeblock code, syntax: syntax %>
+</div>

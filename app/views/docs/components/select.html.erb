@@ -1,0 +1,34 @@
+<% content_for :title, "Select — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Select" %>
+    <%= sui.lead "A native <select> with a shadcn chevron. Uses the browser's dropdown — no JS, works with form submissions automatically." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "select" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 2, class: "max-w-xs" do %>
+        <%= sui.label "Plan", for: "plan" %>
+        <%= sui.select(id: "plan", name: "plan") do %>
+          <option value="hobby">Hobby</option>
+          <option value="pro" selected>Pro</option>
+          <option value="team">Team</option>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.select(name: "small", size: :sm, class: "max-w-xs") do %>
+        <option>Small size</option>
+        <option>Second</option>
+      <% end %>
+    <% end %>
+  </div>
+</div>

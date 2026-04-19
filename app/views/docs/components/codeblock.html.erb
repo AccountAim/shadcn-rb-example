@@ -1,0 +1,58 @@
+<% content_for :title, "Codeblock — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Codeblock" %>
+    <%= sui.lead "Syntax-highlighted code rendered server-side via Rouge. Light/dark themes auto-switch with the theme switcher." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "codeblock" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      <%= sui.code "codeblock(code, syntax:)" %> formats a string through Rouge's Github
+      theme and emits an inline <%= sui.code "<style>" %> block with both light and
+      dark rules scoped to <%= sui.code ".shadcnrb-code" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.codeblock <<~RUBY, syntax: :ruby %>
+        class Greeting
+          def initialize(name)
+            @name = name
+          end
+
+          def to_s
+            "Hello, #{@name}!"
+          end
+        end
+      RUBY
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.codeblock <<~JS, syntax: :javascript %>
+        import { Controller } from "@hotwired/stimulus"
+
+        export default class extends Controller {
+          connect() {
+            console.log("connected", this.element)
+          }
+        }
+      JS
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Theme integration" %>
+    <%= sui.muted do %>
+      Mount the theme styles once in your layout <%= sui.code "<head>" %> with
+      <%= sui.code "sui.codeblock_theme_styles" %>. Light rules apply by default;
+      <%= sui.code ".dark .shadcnrb-code" %> rules override when the
+      <%= sui.code ".dark" %> class is on <%= sui.code "<html>" %>.
+    <% end %>
+  </div>
+</div>

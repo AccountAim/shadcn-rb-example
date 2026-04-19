@@ -1,0 +1,82 @@
+<% content_for :title, "Breadcrumb — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Breadcrumb" %>
+    <%= sui.lead "Shows the user's location within a site hierarchy and allows navigation to ancestor pages." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "breadcrumb" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Build the breadcrumb by composing <%= sui.code "bc.list" %>, <%= sui.code "bc.item" %>, <%= sui.code "bc.link" %>, <%= sui.code "bc.separator" %>, and <%= sui.code "bc.page" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.breadcrumb do |bc| %>
+        <%= bc.list do %>
+          <%= bc.item do %>
+            <%= bc.link "Home", root_path %>
+          <% end %>
+          <%= bc.separator %>
+          <%= bc.item do %>
+            <%= bc.link "Components", "#" %>
+          <% end %>
+          <%= bc.separator %>
+          <%= bc.item do %>
+            <%= bc.page "Breadcrumb" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With ellipsis" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "bc.ellipsis" %> to collapse middle segments in long paths.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.breadcrumb do |bc| %>
+        <%= bc.list do %>
+          <%= bc.item do %>
+            <%= bc.link "Home", root_path %>
+          <% end %>
+          <%= bc.separator %>
+          <%= bc.item do %>
+            <%= bc.ellipsis %>
+          <% end %>
+          <%= bc.separator %>
+          <%= bc.item do %>
+            <%= bc.link "Components", "#" %>
+          <% end %>
+          <%= bc.separator %>
+          <%= bc.item do %>
+            <%= bc.page "Breadcrumb" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.breadcrumb</code>",     "—",             "—",                    "Root <code>&lt;nav&gt;</code> with <code>aria-label=\"breadcrumb\"</code>. Yields a <code>bc</code> proxy."],
+      ["<code>bc.list</code>",            "—",             "—",                    "Ordered list (<code>&lt;ol&gt;</code>) that wraps all items."],
+      ["<code>bc.item</code>",            "—",             "—",                    "Individual <code>&lt;li&gt;</code> wrapper for a link, page, or ellipsis."],
+      ["<code>bc.link(name, url)</code>", "<code>&block</code>", "—",              "Clickable ancestor link. Shortcut mirrors Rails <code>link_to</code>. Pass a block to render a styled <code>&lt;span&gt;</code> wrapper around a custom <code>link_to</code> / <code>button_to</code>."],
+      ["<code>bc.page(name)</code>",      "—",             "—",                    "Non-clickable current page label with <code>aria-current=\"page\"</code>."],
+      ["<code>bc.separator</code>",       "—",             "chevron-right icon",   "Visual divider between items. Pass a block to render a custom separator."],
+      ["<code>bc.ellipsis</code>",        "—",             "more-horizontal icon", "Collapsed segment indicator. Renders a <code>more-horizontal</code> icon by default."],
+    ] %>
+  </div>
+</div>

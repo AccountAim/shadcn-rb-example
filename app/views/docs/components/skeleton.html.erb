@@ -1,0 +1,72 @@
+<% content_for :title, "Skeleton — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Skeleton" %>
+    <%= sui.lead "A pulsing placeholder block. Shape it entirely with utilities — the component brings only the pulse and the surface color." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "skeleton" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= live_example do %>
+      <div class="flex items-center gap-3">
+        <%= sui.skeleton class: "size-10 rounded-full" %>
+        <div class="space-y-2">
+          <%= sui.skeleton class: "h-4 w-40" %>
+          <%= sui.skeleton class: "h-4 w-28" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Card" %>
+    <%= live_example do %>
+      <div class="flex flex-col gap-3">
+        <%= sui.skeleton class: "h-32 w-64 rounded-xl" %>
+        <div class="space-y-2">
+          <%= sui.skeleton class: "h-4 w-64" %>
+          <%= sui.skeleton class: "h-4 w-48" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "As a lazy loading state" %>
+    <%= sui.muted do %>
+      Skeletons are the natural loading state for lazy-loaded panels — the
+      block body of a <%= sui.code "src:" %> dialog / hover_card /
+      dropdown_menu, or the <%= sui.code "loading:" %> option in kwarg form.
+      The lazy sections on those components' pages use them.
+    <% end %>
+
+    <% snippet = <<~RUBY
+      sui.hover_card src: user_preview_path(user) do |h|
+        h.trigger { sui.link_to user.name, user_path(user) }
+        tag.div class: "flex gap-3" do
+          sui.skeleton(class: "size-10 shrink-0 rounded-full") +
+            tag.div(class: "flex-1 space-y-2 py-1") do
+              sui.skeleton(class: "h-3 w-24") + sui.skeleton(class: "h-3")
+            end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock snippet %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Args Description], rows: [
+      ["<code>sui.skeleton</code>", "<code>**opts</code>", "A <code>bg-accent animate-pulse rounded-md</code> div; size and shape via <code>class:</code>"],
+    ] %>
+  </div>
+</div>

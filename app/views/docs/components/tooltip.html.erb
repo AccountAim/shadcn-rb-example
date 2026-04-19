@@ -1,0 +1,219 @@
+<% content_for :title, "Tooltip — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Tooltip" %>
+    <%= sui.lead "A short label that appears on hover or keyboard focus. The panel renders in the browser's top layer, so no container can clip it." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "tooltip" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= sui.muted do %>
+      The block is the panel. <%= sui.code "t.trigger" %> marks what the panel
+      is attached to — you write that element yourself with any helper, and it
+      can sit anywhere in the block since it's hoisted to the top of the
+      wrapper. <%= sui.code "sui.hover_card" %> takes the same shape.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip do |t| %>
+        <%= t.trigger { sui.button "Save", variant: :outline } %>
+        Add to library
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Attaching to any helper" %>
+    <%= sui.muted do %>
+      Give <%= sui.code "t.trigger" %> a block and your markup is used
+      verbatim — every helper keeps its own signature. The tooltip never
+      intercepts it: hover is bound on the wrapper, so
+      <%= sui.code "button_to" %> keeps its CSRF form and links keep their
+      paths.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip do |t| %>
+        <%= t.trigger { sui.link_to "Docs", "https://ui.shadcn.com", target: "_blank" } %>
+        Opens in a new tab
+      <% end %>
+
+      <%= sui.tooltip side: :bottom do |t| %>
+        <%= t.trigger do %>
+          <%= sui.button_to "Delete", destroy_demo_chart_path(1), method: :delete,
+                variant: :destructive, size: :sm %>
+        <% end %>
+        Delete this chart
+      <% end %>
+
+      <%= sui.tooltip do |t| %>
+        <%= t.trigger { sui.button variant: :ghost, size: :icon, icon: :ellipsis } %>
+        Settings
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sides" %>
+    <%= sui.muted do %>
+      <%= sui.code "side:" %> takes <%= sui.code ":top" %> (default),
+      <%= sui.code ":right" %>, <%= sui.code ":bottom" %>, <%= sui.code ":left" %>.
+      When the declared side doesn't fit the viewport the panel flips to the
+      opposite one, and it slides along the free axis to stay in view — scroll
+      this page with a tooltip open to watch it.
+    <% end %>
+
+    <%= live_example do %>
+      <% %i[top right bottom left].each do |side| %>
+        <%= sui.tooltip side: side do |t| %>
+          <%= t.trigger { sui.button side.to_s.titleize, variant: :outline } %>
+          On the <%= side %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Alignment" %>
+    <%= sui.muted do %>
+      <%= sui.code "align:" %> shifts the panel along the free axis —
+      <%= sui.code ":start" %>, <%= sui.code ":center" %> (default),
+      <%= sui.code ":end" %>. Handy when the trigger sits at a container edge.
+    <% end %>
+
+    <%= live_example do %>
+      <% %i[start center end].each do |align| %>
+        <%= sui.tooltip side: :bottom, align: align do |t| %>
+          <%= t.trigger { sui.button align.to_s.titleize, variant: :outline } %>
+          Aligned <%= align %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Delays" %>
+    <%= sui.muted do %>
+      Milliseconds before the panel opens and after the pointer leaves. Both
+      default to <%= sui.code "0" %> — shadcn's <%= sui.code "TooltipProvider" %>
+      default, minus the provider.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip delay: 500, close_delay: 200 do |t| %>
+        <%= t.trigger { sui.button "Patient", variant: :secondary } %>
+        Waited half a second
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Markup panels" %>
+    <%= sui.muted do %>
+      The panel body is ordinary ERB, so anything composes inside it. Style the
+      panel itself through <%= sui.code "content:" %> — its own option hash,
+      the same way <%= sui.code "button_to" %> takes <%= sui.code "form:" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip content: { class: "w-44" } do |t| %>
+        <%= t.trigger { sui.button "Save" } %>
+        <span class="flex items-center justify-between gap-2">
+          Save changes
+          <kbd class="rounded border border-background/30 px-1 font-mono text-[10px]">⌘S</kbd>
+        </span>
+      <% end %>
+
+      <%= sui.tooltip side: :bottom do |t| %>
+        <%= t.trigger { sui.button "Two lines", variant: :outline } %>
+        <span class="block font-medium">Rate limited</span>
+        <span class="block text-background/70">Try again in about a minute.</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Long labels" %>
+    <%= sui.muted do %>
+      The panel is <%= sui.code "w-fit max-w-xs" %>, same as upstream: it hugs
+      a short label and wraps past 20rem.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip do |t| %>
+        <%= t.trigger { sui.button "Long label", variant: :outline } %>
+        Exports the current view as CSV. Large exports are emailed to you when they finish.
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Disabled trigger" %>
+    <%= sui.muted do %>
+      Hover is bound on the wrapper, not the trigger, so a disabled button
+      still shows its tooltip — no <%= sui.code "<span>" %> wrapper needed.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tooltip do |t| %>
+        <%= t.trigger { sui.button "Publish", variant: :outline, disabled: true } %>
+        Add a title before publishing
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Clipping" %>
+    <%= sui.muted do %>
+      The panel is a native <%= sui.code 'popover="manual"' %> element shown in
+      the browser's top layer, so ancestors with <%= sui.code "overflow: hidden" %>
+      (or scrolling containers, transforms, stacking contexts) can't clip or
+      cover it. This trigger sits in a cramped <%= sui.code "overflow-hidden" %>
+      box; the tooltip doesn't care.
+    <% end %>
+
+    <%= live_example do %>
+      <div class="h-12 w-40 overflow-hidden rounded-md border border-dashed p-2">
+        <%= sui.tooltip do |t| %>
+          <%= t.trigger { sui.button "Boxed in", variant: :outline, size: :sm } %>
+          Escaped the box
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.tooltip</code>", "<code>side:, align:, arrow:, delay:, close_delay:, content:, **opts</code>", "<code>:top</code> / <code>:center</code> / <code>true</code> / <code>0</code> / <code>0</code>", "Wrapper; the block body is the panel. Mounts the shared <code>shadcnrb--anchored--component</code> controller and owns the hover/focus wiring. <code>**opts</code> land on the wrapper, <code>content:</code> on the panel."],
+      ["<code>t.trigger</code>", "<code>&amp;block</code>", "—", "Marks which part of the block is the trigger; everything else is the panel. Your markup, verbatim — the component renders no button of its own, which is why it has no dependencies. Hoisted to the top of the wrapper, so its position in the block doesn't matter."],
+    ] %>
+    <%= sui.muted do %>
+      <%= sui.code "aria-describedby" %> is wired on connect to the hoisted
+      trigger's first element. Tag your own element
+      <%= sui.code 'data-slot="tooltip-trigger"' %> to point it somewhere else
+      — worth doing if the trigger block renders several siblings.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Divergences" %>
+    <%= sui.muted do %>
+      No <%= sui.code "TooltipProvider" %> — delays are per-tooltip. No
+      <%= sui.code "TooltipContent" %> part either; the block body is the
+      panel. Positioning is <%= sui.code "@floating-ui/dom" %>, vendored via
+      importmap (no npm), and the panel renders in the browser's top layer
+      instead of a portal. The
+      <%= sui.code "sideOffset" %> / <%= sui.code "alignOffset" %> props are
+      baked in at 4px.
+    <% end %>
+  </div>
+</div>

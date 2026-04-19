@@ -1,0 +1,10 @@
+<% content_for :title, "Nav + Sidebar block — shadcnrb" %>
+
+<%= sui.layout.container size: :xl, class: "py-10 space-y-8" do %>
+  <div class="space-y-2">
+    <%= sui.h1 "Nav + Sidebar" %>
+    <%= sui.lead "Full-width top navigation over a sidebar + inset app shell. The top bar carries product/marketing/account links; the sidebar handles primary app navigation." %>
+  </div>
+
+  <%= block_example "nav_and_sidebar", height: 960 %>
+<% end %>

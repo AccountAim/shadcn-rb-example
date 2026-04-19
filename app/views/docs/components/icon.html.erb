@@ -1,0 +1,68 @@
+<% content_for :title, "Icon — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Icon" %>
+    <%= sui.lead "Inline SVG icon helper. Reads from app/components/shadcnrb/icon/icons/; delegates to lucide-rails (if the gem is loaded) for full Lucide coverage." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "icon" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= live_example do %>
+      <div class="flex items-center gap-4">
+        <%= sui.icon :check %>
+        <%= sui.icon :search %>
+        <%= sui.icon :settings %>
+        <%= sui.icon :"circle-alert" %>
+        <%= sui.icon :x %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "size: :sm" %> / <%= sui.code ":md" %> / <%= sui.code ":lg" %>,
+      or any Tailwind class via <%= sui.code "class:" %>.
+    <% end %>
+    <%= live_example do %>
+      <div class="flex items-center gap-4">
+        <%= sui.icon :check, size: :sm %>
+        <%= sui.icon :check, size: :md %>
+        <%= sui.icon :check, size: :lg %>
+        <%= sui.icon :check, class: "size-8" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Coverage" %>
+    <%= sui.p do %>
+      The installer copies a minimal bundled set into
+      <%= sui.code "app/components/shadcnrb/icon/icons/" %>. Drop more SVGs there to
+      extend coverage — filename becomes the symbol
+      (<%= sui.code "check.svg" %> → <%= sui.code "sui.icon(:check)" %>).
+    <% end %>
+    <%= sui.p do %>
+      For full Lucide coverage (~2000 icons) without bundling by hand, add the
+      <%= sui.code "lucide-rails" %> gem — <%= sui.code "sui.icon" %> delegates
+      to it automatically when present.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Arg Type Description], rows: [
+      ["<code>name</code>", "<code>Symbol / String</code>", "Icon name. Hyphens allowed via quoted symbol: <code>:\"circle-alert\"</code>."],
+      ["<code>size</code>", "<code>Symbol</code>", "<code>:sm</code> (size-3), <code>:md</code> / default (size-4), <code>:lg</code> (size-5)."],
+      ["<code>class:</code>", "<code>String</code>", "Merged with the size class — use for colors, strokes, or custom sizes."],
+    ] %>
+  </div>
+</div>

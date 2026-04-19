@@ -1,0 +1,25 @@
+<% content_for :title, "Textarea — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Textarea" %>
+    <%= sui.lead "A styled <textarea>. Plays with field-sizing so it grows with content in modern browsers." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "textarea" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= live_example do %>
+      <!-- placeholder -->
+      <%= sui.textarea name: "bio", placeholder: "Tell us about yourself…", class: "max-w-md" %>
+      <!-- block form (prefilled) -->
+      <%= sui.textarea name: "notes", class: "max-w-md" do %>
+        Prefilled content lives inside the textarea body.
+      <% end %>
+    <% end %>
+  </div>
+</div>

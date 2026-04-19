@@ -1,0 +1,62 @@
+<% content_for :title, "Progress — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Progress" %>
+    <%= sui.lead "Displays a horizontal bar indicating the completion percentage of a task or operation." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "progress" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "value:" %> to set the current progress. The default maximum is <%= sui.code "100" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.progress value: 50 %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Different values" %>
+    <%= sui.muted do %>
+      The indicator width is calculated as <%= sui.code "value / max * 100%" %>. Values are clamped to <%= sui.code "0..100" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- value: 25 -->
+      <%= sui.progress value: 25 %>
+      <!-- value: 50 -->
+      <%= sui.progress value: 50 %>
+      <!-- value: 75 -->
+      <%= sui.progress value: 75 %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Custom maximum" %>
+    <%= sui.muted do %>
+      Override <%= sui.code "max:" %> when your domain uses a different scale (e.g. steps, bytes).
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.progress value: 3, max: 10 %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>progress</code>", "<code>value:, max:</code>", "<code>0, 100</code>", "Renders the progress bar. Sets <code>role=\"progressbar\"</code> and ARIA value attributes automatically."],
+      ["<code>value:</code>", "Numeric", "<code>0</code>", "Current progress value. Clamped to <code>0..max</code> before rendering."],
+      ["<code>max:</code>", "Numeric", "<code>100</code>", "Upper bound of the progress range. Used to compute the fill percentage."],
+    ] %>
+  </div>
+</div>

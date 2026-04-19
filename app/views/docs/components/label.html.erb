@@ -1,0 +1,66 @@
+<% content_for :title, "Label — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Label" %>
+    <%= sui.lead do %>
+      An accessible <%= sui.code "<label>" %> element with consistent typography. Use <%= sui.code "for_id:" %> to associate it with an input.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "label" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+
+    <%= live_example do %>
+      <%= sui.label "Email address" %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Linked to an input</h3>
+    <%= live_example do %>
+      <div class="space-y-2 w-[320px]">
+        <%= sui.label "Username", for_id: "username2" %>
+        <%= sui.input id: "username2", placeholder: "johndoe" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Multiple fields</h3>
+    <%= live_example do %>
+      <div class="space-y-4 w-[320px]">
+        <div class="space-y-2">
+          <%= sui.label "First name", for_id: "first-name" %>
+          <%= sui.input id: "first-name", placeholder: "Jane" %>
+        </div>
+        <div class="space-y-2">
+          <%= sui.label "Last name", for_id: "last-name" %>
+          <%= sui.input id: "last-name", placeholder: "Doe" %>
+        </div>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">With block content</h3>
+    <%= live_example do %>
+      <%= sui.label(for_id: "agree") do %>
+        <%= tag.span "I agree to the " %>
+        <%= link_to "terms", "#", class: "underline underline-offset-4" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[name type default description], rows: [
+      ["<code>name</code>", "String", "<code>nil</code>", "Label text. Can alternatively be provided as a block for richer content."],
+      ["<code>for_id</code>", "String", "<code>nil</code>", "Value of the <code>for</code> attribute; links the label to an input with the matching <code>id</code>."],
+      ["<code>**opts</code>", "Hash", "—", "Any additional HTML attribute passed through to the <code>&lt;label&gt;</code> element."],
+    ] %>
+  </div>
+</div>

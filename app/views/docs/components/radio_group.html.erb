@@ -1,0 +1,33 @@
+<% content_for :title, "Radio Group — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Radio Group" %>
+    <%= sui.lead "Styled native radio buttons grouped by name. No JS — standard browser semantics." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "radio_group" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= live_example do %>
+      <%= sui.radio_group do |rg| %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= rg.item name: "plan", value: "hobby", id: "plan-hobby" %>
+          <%= sui.label "Hobby ($0/mo)", for: "plan-hobby" %>
+        <% end %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= rg.item name: "plan", value: "pro", id: "plan-pro", checked: true %>
+          <%= sui.label "Pro ($19/mo)", for: "plan-pro" %>
+        <% end %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= rg.item name: "plan", value: "team", id: "plan-team" %>
+          <%= sui.label "Team ($49/mo)", for: "plan-team" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

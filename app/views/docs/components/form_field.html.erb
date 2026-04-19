@@ -1,0 +1,67 @@
+<% content_for :title, "Form Field — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Form Field" %>
+    <%= sui.lead "Stacked label + control + hint/error wrapper. One call per field — no manual label/error markup." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "form_field" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= live_example do %>
+      <div class="max-w-sm">
+        <%= sui.form_field label: "Email", hint: "We'll never share it.", for_id: "fx_email" do %>
+          <%= sui.input id: "fx_email", type: "email", placeholder: "you@example.com" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With validation error" %>
+    <%= sui.muted "Pass `error:` — the error message replaces the hint and the label stack turns destructive-tinted via the control's own aria-invalid styling." %>
+    <%= live_example do %>
+      <div class="max-w-sm">
+        <%= sui.form_field label: "Email", error: "Email is required", for_id: "fx_email_err" do %>
+          <%= sui.input id: "fx_email_err", type: "email", "aria-invalid": true %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Inside Shadcnrb::FormBuilder::Component" %>
+    <%= sui.muted do %>
+      The <%= sui.code "f.field" %> shortcut on <%= sui.code "Shadcnrb::FormBuilder::Component" %>
+      wraps each control with a <%= sui.code "form_field" %>, auto-populating
+      the error from the model.
+    <% end %>
+
+    <% code = <<~RUBY
+      form_with(model: @user, builder: Shadcnrb::FormBuilder::Component) do |f|
+        f.field :email, label: "Email", hint: "We'll never share it."
+        f.field :bio,   label: "Bio",   as: :text_area
+        f.submit
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Kwarg Type Description], rows: [
+      ["<code>label</code>", "<code>String</code>", "Field label text. Wrapped in a <code>sui.label</code>."],
+      ["<code>hint</code>", "<code>String</code>", "Helper text shown below the control. Suppressed when <code>error</code> is present."],
+      ["<code>error</code>", "<code>String</code>", "Inline error message in destructive color."],
+      ["<code>for_id</code>", "<code>String</code>", "Target for the label's <code>for=</code> attribute."],
+    ] %>
+  </div>
+</div>

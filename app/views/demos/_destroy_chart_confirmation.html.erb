@@ -1,0 +1,14 @@
+<%= sui.dialog(open: true, id: "destroy-chart-confirm-#{chart_id}") do |dialog| %>
+  <%= dialog.header do %>
+    <%= dialog.title "Delete this chart?" %>
+    <%= dialog.description "This chart has #{user_count} active users. They will lose access immediately. This action cannot be undone." %>
+  <% end %>
+  <%= dialog.footer do %>
+    <%= dialog.close "Cancel", variant: :outline %>
+    <%= button_to "Yes, delete",
+          destroy_demo_chart_path(chart_id, confirm: true),
+          method: :delete,
+          class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap cursor-pointer h-9 px-4 py-2 bg-destructive text-white hover:bg-destructive/90",
+          form: { data: { turbo_stream: true } } %>
+  <% end %>
+<% end %>

@@ -1,0 +1,162 @@
+<%= sui.sidebar_wrapper do |s| %>
+  <%= s.sidebar variant: :inset, collapsible: :icon do %>
+    <%= s.header do %>
+      <div class="flex items-center gap-2 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">A</div>
+        <div class="min-w-0 group-data-[collapsible=icon]:hidden">
+          <p class="truncate text-sm font-semibold">Acme Inc</p>
+          <p class="truncate text-xs text-muted-foreground">Enterprise</p>
+        </div>
+      </div>
+    <% end %>
+
+    <%= s.content do %>
+      <%= s.group do %>
+        <%= s.group_label "General" %>
+        <%= s.group_content do %>
+          <%= s.menu do %>
+            <% [["Profile", :user, true], ["Account", :settings, false], ["Notifications", :"circle-alert", false], ["Billing", :"credit-card", false]].each do |(label, ic, active)| %>
+              <%= s.menu_item do %>
+                <%= s.menu_button label, "#", active: active, tooltip: label, icon: ic %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= s.separator %>
+
+      <%= s.group do %>
+        <%= s.group_label "Team" %>
+        <%= s.group_content do %>
+          <%= s.menu do %>
+            <% [["Members", :users, "12"], ["Invitations", :mail, "3"], ["Roles", :shield, nil]].each do |(label, ic, badge)| %>
+              <%= s.menu_item do %>
+                <%= s.menu_button label, "#", tooltip: label, icon: ic %>
+                <%= s.menu_badge badge if badge %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= s.footer do %>
+      <div class="flex items-center gap-2 px-2 py-1.5 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+        <%= sui.avatar(class: "h-8 w-8 shrink-0") { |a| a.fallback "JD" } %>
+        <div class="min-w-0 group-data-[collapsible=icon]:hidden">
+          <p class="truncate text-sm font-medium">Jane Doe</p>
+          <p class="truncate text-xs text-muted-foreground">jane@acme.com</p>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= s.inset do %>
+    <%= s.inset_header do %>
+      <%= s.trigger %>
+      <%= sui.separator class: "mx-2 h-4", orientation: :vertical %>
+      <span class="text-sm font-medium">Profile</span>
+      <%= sui.layout.row gap: 2, class: "ml-auto" do %>
+        <%= sui.button "Invite", variant: :outline, size: :sm %>
+        <%= sui.button "Upgrade", size: :sm %>
+      <% end %>
+    <% end %>
+
+    <%= s.inset_content class: "overflow-visible" do %>
+      <%= sui.layout.stack gap: 8, class: "p-8" do %>
+        <%= sui.layout.row gap: 4, justify: :between, align: :start do %>
+          <%= sui.layout.stack gap: 1 do %>
+            <%= sui.h2 "Profile" %>
+            <%= sui.muted { "How you appear to others on Acme." } %>
+          <% end %>
+          <%= sui.layout.row gap: 2 do %>
+            <%= sui.button "Cancel", variant: :ghost, size: :sm %>
+            <%= sui.button "Save changes", size: :sm %>
+          <% end %>
+        <% end %>
+
+        <%= sui.layout.grid cols: 1, gap: 6, class: "md:grid-cols-2" do %>
+          <%= sui.layout.stack gap: 2 do %>
+            <%= sui.label "Display name", for: "display-name" %>
+            <%= sui.input id: "display-name", value: "Jane Doe" %>
+          <% end %>
+          <%= sui.layout.stack gap: 2 do %>
+            <%= sui.label "Email", for: "email" %>
+            <%= sui.input id: "email", type: "email", value: "jane@acme.com" %>
+          <% end %>
+          <%= sui.layout.stack gap: 2, class: "md:col-span-2" do %>
+            <%= sui.label "Bio", for: "bio" %>
+            <%= sui.input id: "bio", value: "Principal engineer, into weird compilers." %>
+            <%= sui.muted { "Brief description for your profile. Max 160 chars." } %>
+          <% end %>
+        <% end %>
+
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.layout.row justify: :between do %>
+            <%= sui.h3 "Plan" %>
+            <%= sui.badge "Current: Pro", variant: :secondary %>
+          <% end %>
+
+          <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-3" do %>
+            <% [
+              {name: "Hobby", price: "$0",  current: false, feats: ["1 project", "Community support"]},
+              {name: "Pro",   price: "$19", current: true,  feats: ["Unlimited projects", "Priority email"]},
+              {name: "Team",  price: "$49", current: false, feats: ["Everything in Pro", "SSO + SAML"]}
+            ].each do |plan| %>
+              <%= sui.card(class: "p-5 #{plan[:current] ? 'ring-2 ring-primary' : ''}") do %>
+                <%= sui.layout.stack gap: 4 do %>
+                  <%= sui.layout.row justify: :between, align: :start do %>
+                    <%= sui.layout.stack gap: 1 do %>
+                      <%= sui.p plan[:name], class: "font-semibold !my-0" %>
+                      <%= sui.layout.row gap: 1, align: :baseline do %>
+                        <%= sui.p plan[:price], class: "text-2xl font-bold !my-0" %>
+                        <%= sui.muted { "/mo" } %>
+                      <% end %>
+                    <% end %>
+                    <%= sui.badge "Current" if plan[:current] %>
+                  <% end %>
+
+                  <%= sui.layout.stack gap: 2 do %>
+                    <% plan[:feats].each do |f| %>
+                      <%= sui.layout.row gap: 2 do %>
+                        <%= sui.icon(:check, class: "size-4 text-primary") %>
+                        <%= sui.p f, class: "text-sm !my-0" %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+
+                  <%= sui.button (plan[:current] ? "Manage" : "Switch"), variant: (plan[:current] ? :outline : :default), class: "w-full" %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Usage this month" %>
+          <%= sui.layout.grid cols: 2, gap: 4, class: "md:grid-cols-4" do %>
+            <% [["Seats", "4 / 10"], ["API calls", "18,240"], ["Storage", "6.3 GB"], ["Bandwidth", "142 GB"]].each do |(label, value)| %>
+              <%= sui.card(class: "p-4") do %>
+                <%= sui.layout.stack gap: 1 do %>
+                  <%= sui.muted { label } %>
+                  <%= sui.p value, class: "text-xl font-semibold !my-0" %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= sui.card(class: "p-6 border-destructive/40") do %>
+          <%= sui.layout.row gap: 4, justify: :between, align: :start do %>
+            <%= sui.layout.stack gap: 1 do %>
+              <%= sui.p "Delete workspace", class: "font-semibold !my-0" %>
+              <%= sui.muted { "This can't be undone. All projects, members, and data will be permanently deleted." } %>
+            <% end %>
+            <%= sui.button "Delete…", variant: :destructive, size: :sm %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

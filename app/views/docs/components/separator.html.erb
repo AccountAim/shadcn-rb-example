@@ -1,0 +1,64 @@
+<% content_for :title, "Separator — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Separator" %>
+    <%= sui.lead do %>
+      A thin visual divider. Renders a <%= sui.code "div" %> with <%= sui.code "role=\"separator\"" %>; supports horizontal and vertical orientations.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "separator" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+
+    <h3 class="text-lg font-medium tracking-tight">Horizontal (default)</h3>
+    <%= live_example do %>
+      <div class="space-y-4 w-[320px]">
+        <%= tag.p "Above the line", class: "text-sm" %>
+        <%= sui.separator %>
+        <%= tag.p "Below the line", class: "text-sm" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Vertical</h3>
+    <%= live_example do %>
+      <div class="flex h-5 items-center gap-4 text-sm">
+        <%= tag.span "Blog" %>
+        <%= sui.separator orientation: :vertical %>
+        <%= tag.span "Docs" %>
+        <%= sui.separator orientation: :vertical %>
+        <%= tag.span "Source" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Separating card sections</h3>
+    <%= live_example do %>
+      <%= sui.card(class: "w-[240px]") do |c| %>
+        <%= c.content(class: "pt-6 space-y-4") do %>
+          <%= tag.p "Profile", class: "font-medium text-sm" %>
+          <%= sui.separator %>
+          <%= tag.p "Billing", class: "font-medium text-sm" %>
+          <%= sui.separator %>
+          <%= tag.p "Security", class: "font-medium text-sm" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[name type default description], rows: [
+      ["<code>orientation</code>", "Symbol", "<code>:horizontal</code>", "<code>:horizontal</code> renders a full-width 1px rule; <code>:vertical</code> renders a full-height 1px rule. Must be inside a flex container with an explicit height for vertical to be visible."],
+      ["<code>**opts</code>", "Hash", "—", "Any additional HTML attribute passed through to the underlying <code>div</code>."],
+    ] %>
+  </div>
+</div>
