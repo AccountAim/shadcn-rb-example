@@ -1,0 +1,138 @@
+# frozen_string_literal: true
+
+# shadcn divergence: Stimulus `shadcnrb--dialog--component` controller replaces Radix
+# `DialogPrimitive.Root`; CSS opacity/scale transitions replace Radix animation
+# states. Lazy-loading via `src:` uses Turbo Frames instead of React children.
+# upstream: dialog.tsx.
+#
+# shadcn divergence: no portal. Backdrop and panel are `popover="manual"`
+# elements the controller shows in the top layer, so no ancestor transform,
+# filter or overflow can box them in. See dialog/component_controller.js.
+#
+# shadcn divergence: child parts (`header`, `title`, `close`, ...) are
+# orphan-protected — they're private on the Dialog class and reachable only
+# through a `:dialog` `Shadcnrb::Scope` (yielded by `sui.dialog do |d| ... end`
+# or via `sui.dialog_proxy`). Calling `sui.dialog_trigger` raises
+# NoMethodError.
+
+module Shadcnrb
+  class Dialog < Component
+    include Shadcnrb::Anchored::TriggerSlot
+
+    # The block is the dialog panel; `d.trigger` names what opens it — the
+    # same slot shape as tooltip / dropdown_menu. Click lives on the root
+    # (clicks inside the panel or backdrop are filtered out by the
+    # controller), so the trigger markup is used verbatim. A dialog rendered
+    # already open (server-driven confirmations) simply has no trigger.
+    #
+    #   sui.dialog do |d|
+    #     d.trigger { sui.button "Edit profile", variant: :outline }
+    #     d.header do
+    #       d.title "Edit profile"
+    #       d.description "Update your display name."
+    #     end
+    #     d.footer { d.close "Save" }
+    #   end
+    #
+    # Pass `src:` to lazy-load the panel via a Turbo Frame when the dialog
+    # opens — the block body becomes the loading state (`loading:` sets it
+    # when there's no block, e.g. the `dialog:` kwarg form). `reload: true`
+    # re-fetches on every open instead of caching the first load. `**opts`
+    # land on the root; `content:` is the panel's own option hash.
+    def dialog(open: false, src: nil, reload: false, loading: nil, content: {}, **opts, &block)
+      opts[:data] = (opts[:data] || {}).merge(
+        slot: "dialog",
+        controller: [ "shadcnrb--dialog--component",
+                      opts.dig(:data, :controller) ].compact.join(" "),
+        action: merge_action(opts[:data],
+          "click->shadcnrb--dialog--component#open",
+          "keydown.esc@window->shadcnrb--dialog--component#keydown"),
+        "shadcnrb--dialog--component-open-value": open
+      )
+      content_tag(:div, **opts) do
+        trigger_html, body = capture_parts(proxy, &block)
+        safe_join([ trigger_html, backdrop, panel(body, src:, reload:, loading:, **content) ])
+      end
+    end
+
+    # Bare scope for lazy-loaded partials rendered outside a `sui.dialog`
+    # block (turbo-frame content).
+    def proxy
+      Scope.new(@builder, kind: :dialog, component: self)
+    end
+
+    private
+
+    def backdrop
+      tag.div("",
+        popover: "manual",
+        data: { slot: "dialog-overlay", "shadcnrb--dialog--component-target": "backdrop",
+                action: "click->shadcnrb--dialog--component#close" },
+        class: self.class.style.backdrop
+      )
+    end
+
+    def panel(body, src:, reload:, loading:, **opts)
+      style = self.class.style
+      opts[:popover] = "manual"
+      opts[:data] =
+        (opts[:data] || {}).merge(slot: "dialog-content", "shadcnrb--dialog--component-target": "content")
+      opts[:class] = Shadcnrb::TailwindMerge.call(style.content, opts[:class])
+
+      content_tag(:div, **opts) do
+        body = lazy_frame(body, src:, reload:, loading:, slot: "dialog") if src
+
+        close_btn = button(
+          variant: :ghost,
+          size: :"icon-sm",
+          "aria-label": "Close",
+          class: style.close_btn_pos,
+          data: { slot: "dialog-close", action: "click->shadcnrb--dialog--component#close" }
+        ) { icon(:x) }
+        safe_join([ body, close_btn ])
+      end
+    end
+
+    def header(scope: nil, **opts, &block)
+      opts[:class] = Shadcnrb::TailwindMerge.call(self.class.style.header, opts[:class])
+      opts[:data] = (opts[:data] || {}).merge(slot: "dialog-header")
+      content_tag(:div, **opts) { scope.capture_block(&block) }
+    end
+
+    def footer(scope: nil, **opts, &block)
+      opts[:class] = Shadcnrb::TailwindMerge.call(self.class.style.footer, opts[:class])
+      opts[:data] = (opts[:data] || {}).merge(slot: "dialog-footer")
+      content_tag(:div, **opts) { scope.capture_block(&block) }
+    end
+
+    def title(name = nil, scope: nil, **opts, &block)
+      opts[:class] = Shadcnrb::TailwindMerge.call(self.class.style.title, opts[:class])
+      opts[:data] = (opts[:data] || {}).merge(slot: "dialog-title")
+      content_tag(:h2, **opts) do
+        block ? capture(&block) : name.to_s
+      end
+    end
+
+    def description(name = nil, scope: nil, **opts, &block)
+      opts[:class] = Shadcnrb::TailwindMerge.call(self.class.style.description, opts[:class])
+      opts[:data] = (opts[:data] || {}).merge(slot: "dialog-description")
+      content_tag(:p, **opts) do
+        block ? capture(&block) : name.to_s
+      end
+    end
+
+    # Wraps a button (or any content) so clicking it closes the dialog.
+    # Usage: d.close { sui.button "Cancel", variant: :outline }
+    def close(name = nil, scope: nil, **opts, &block)
+      opts[:data] = (opts[:data] || {}).merge(slot: "dialog-close",
+        action: "click->shadcnrb--dialog--component#close")
+      if block
+        content_tag(:span, **opts) { scope.capture_block(&block) }
+      else
+        button(name, **opts)
+      end
+    end
+
+    private :header, :footer, :title, :description, :close
+  end
+end
