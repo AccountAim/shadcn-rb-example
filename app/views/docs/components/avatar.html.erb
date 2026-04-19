@@ -1,0 +1,91 @@
+<% content_for :title, "Avatar — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Avatar" %>
+    <%= sui.lead "A circular image with an optional text fallback, composed from three sub-helpers." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "avatar" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Compose <%= sui.code "sui.avatar do |a|" %> with <%= sui.code "a.image" %> and/or <%= sui.code "a.fallback" %> inside a block.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.avatar do |a| %>
+        <%= a.fallback "JD" %>
+      <% end %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.avatar do |a| %>
+        <%= a.image src: "https://i.pravatar.cc/100?img=3", alt: "User" %>
+        <%= a.fallback "U" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Fallback on broken image" %>
+    <%= sui.muted do %>
+      Pass a URL that fails to load (404, network error) and the fallback shows instead. The <code>onerror</code> handler removes the broken <%= sui.code "<img>" %> so the sibling fallback takes over.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.avatar do |a| %>
+        <%= a.image src: "/does-not-exist.png", alt: "Missing" %>
+        <%= a.fallback "SC" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "size:" %> to <%= sui.code "sui.avatar" %> to adjust the circle diameter.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- size: :sm -->
+      <%= sui.avatar size: :sm do |a| %>
+        <%= a.image src: "https://i.pravatar.cc/100?img=3", alt: "User" %>
+        <%= a.fallback "U" %>
+      <% end %>
+
+      <!-- size: :default -->
+      <%= sui.avatar size: :default do |a| %>
+        <%= a.image src: "https://i.pravatar.cc/100?img=3", alt: "User" %>
+        <%= a.fallback "U" %>
+      <% end %>
+
+      <!-- size: :lg -->
+      <%= sui.avatar size: :lg do |a| %>
+        <%= a.image src: "https://i.pravatar.cc/100?img=3", alt: "User" %>
+        <%= a.fallback "U" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Helper Prop Type Default Description], rows: [
+      ["<code>sui.avatar</code>",  "<code>size</code>", "Symbol", "<code>:default</code>", "Circle size — <code>:sm</code> (24 px), <code>:default</code> (32 px), <code>:lg</code> (40 px)"],
+      ["<code>a.image</code>",     "<code>src</code>",  "String", "—",                     "Image URL (required)"],
+      ["<code>a.image</code>",     "<code>alt</code>",  "String", "<code>\"\"</code>",     "Alt text for the image"],
+      ["<code>a.fallback</code>",  "<code>name</code>", "String", "<code>nil</code>",      "Initials or text shown when the image is absent or fails to load"],
+      ["all helpers",              "<code>**opts</code>", "Hash", "—",                     "Any extra HTML attributes are forwarded to the tag"],
+    ] %>
+  </div>
+
+  <%= sui.muted do %>
+    Next: <%= link_to "Button", docs_component_path("button"), class: "underline underline-offset-4 font-medium" %> →
+  <% end %>
+</div>

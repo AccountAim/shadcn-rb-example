@@ -1,0 +1,213 @@
+<% content_for :title, "Navigation Menu — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Navigation Menu" %>
+    <%= sui.lead "A horizontal nav menu for site headers. Ports the structural pieces of shadcn/ui's Radix Navigation Menu — no dropdown viewport." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "navigation_menu" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= live_example do %>
+      <%= sui.navigation_menu do |nav| %>
+        <%= nav.item { nav.link "Home", root_path } %>
+        <%= nav.item { nav.link "Docs", docs_path } %>
+        <%= nav.item { nav.link "Blocks", blocks_path } %>
+        <%= nav.item { nav.link "GitHub", "https://github.com/accountaim/shadcn-rb", target: "_blank", rel: "noopener" } %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Item with dropdown (hover)" %>
+    <%= sui.muted do %>
+      Inside a <%= sui.code "nav.item" %>, <%= sui.code "nav.trigger" %> is the
+      tab and the rest of the block is the panel — the same slot shape as
+      tooltip and dropdown_menu; the pairing is structural, no ids to match up.
+      Opens on hover / focus, closes after a short delay when the pointer
+      leaves both — matching shadcn/ui's NavigationMenuTrigger. Click also
+      toggles for touch.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.navigation_menu do |nav| %>
+        <%= nav.item { nav.link "Home", root_path } %>
+        <%= nav.item do %>
+          <%= nav.trigger do %>
+            Products
+            <%= sui.icon :"chevron-down", class: "size-4 opacity-60 transition-transform group-data-[state=open]:rotate-180" %>
+          <% end %>
+          <div class="grid gap-1 w-64">
+            <% [
+              ["Feature A",    "Fast, reliable, and accessible."],
+              ["Feature B",    "Works on every device, out of the box."],
+              ["Integrations", "Connect with the tools your team already uses."],
+              ["All products", "Explore the full platform."]
+            ].each do |(title, desc)| %>
+              <%= link_to "#", class: "block rounded-md p-2 hover:bg-accent hover:text-accent-foreground" do %>
+                <div class="text-sm font-medium leading-none"><%= title %></div>
+                <p class="mt-1 text-xs text-muted-foreground line-clamp-2"><%= desc %></p>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        <%= nav.item { nav.link "Pricing", "#" } %>
+        <%= nav.item { nav.link "Docs",    docs_path } %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With logo + centered items" %>
+    <%= sui.muted "Logo on the left, nav items centered, CTA on the right — classic marketing header." %>
+    <%= live_example do %>
+      <div class="flex w-full items-center gap-6">
+        <div class="flex items-center gap-2">
+          <div class="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">A</div>
+          <span class="font-semibold">Acme</span>
+        </div>
+        <div class="flex-1 flex justify-center">
+          <%= sui.navigation_menu do |nav| %>
+            <%= nav.item { nav.link "Features", "#" } %>
+            <%= nav.item { nav.link "Pricing",  "#" } %>
+            <%= nav.item { nav.link "About",    "#" } %>
+          <% end %>
+        </div>
+        <%= sui.link_to "Get started", "#", variant: :default, size: :sm %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With user profile dropdown" %>
+    <%= sui.muted "App-shell top bar: brand + nav items on the left, account dropdown on the right." %>
+    <%= live_example do %>
+      <div class="flex w-full items-center gap-6">
+        <span class="font-semibold">Acme</span>
+        <%= sui.navigation_menu do |nav| %>
+          <%= nav.item { nav.link "Dashboard", "#", active: true } %>
+          <%= nav.item { nav.link "Projects",  "#" } %>
+          <%= nav.item { nav.link "Team",      "#" } %>
+        <% end %>
+        <div class="ml-auto">
+          <%= sui.dropdown_menu align: :end, content: { class: "w-48" } do |m| %>
+            <%= m.trigger do %>
+              <%= sui.button variant: :ghost, size: :"icon-sm", "aria-label": "Account" do %>
+                <%= sui.avatar size: :sm do |a| %>
+                  <%= a.fallback "SC" %>
+                <% end %>
+              <% end %>
+            <% end %>
+            <%= m.label "My Account" %>
+            <%= m.separator %>
+            <%= m.item "Profile",       "#" %>
+            <%= m.item "Billing",       "#" %>
+            <%= m.item "Team settings", "#" %>
+            <%= m.separator %>
+            <%= m.item "Log out", "#" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Branded / colored" %>
+    <%= sui.muted do %>
+      Drop a <%= sui.code "bg-*" %> utility on an outer wrapper and pass a
+      matching <%= sui.code "class:" %> to each <%= sui.code "nav.link" %> —
+      the link's default <%= sui.code "bg-background" %> is overridden by
+      TailwindMerge when you provide your own.
+    <% end %>
+    <% branded_link    = "bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" %>
+    <% branded_trigger = "#{branded_link} data-[state=open]:bg-primary-foreground/10 data-[state=open]:text-primary-foreground" %>
+    <%= live_example do %>
+      <div class="flex w-full items-center gap-6 rounded-lg bg-primary px-4 py-2">
+        <div class="flex items-center gap-2 text-primary-foreground">
+          <div class="flex h-7 w-7 items-center justify-center rounded-md bg-primary-foreground text-primary text-sm font-bold">A</div>
+          <span class="font-semibold">Acme</span>
+        </div>
+        <%= sui.navigation_menu do |nav| %>
+          <%= nav.item do %>
+            <%= nav.trigger class: branded_trigger do %>
+              Product
+              <%= sui.icon :"chevron-down", class: "size-4 opacity-70 transition-transform group-data-[state=open]:rotate-180" %>
+            <% end %>
+            <div class="grid gap-1 w-64">
+              <% [
+                ["Overview",     "Everything Acme can do."],
+                ["Features",     "Individual capabilities in depth."],
+                ["Integrations", "Connect with the tools your team uses."]
+              ].each do |(title, desc)| %>
+                <%= link_to "#", class: "block rounded-md p-2 hover:bg-accent hover:text-accent-foreground" do %>
+                  <div class="text-sm font-medium leading-none"><%= title %></div>
+                  <p class="mt-1 text-xs text-muted-foreground line-clamp-2"><%= desc %></p>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+          <%= nav.item { nav.link "Pricing", "#", class: branded_link } %>
+          <%= nav.item { nav.link "Docs",    "#", class: branded_link } %>
+        <% end %>
+        <%= sui.link_to "Sign in", "#", variant: :secondary, size: :sm, class: "ml-auto" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Active state" %>
+    <%= sui.p do %>
+      Pass <%= sui.code "active: true" %> explicitly or let it auto-detect via
+      <%= sui.code "current_page?" %> when you pass a Rails path. The marketing
+      header on this site uses auto-detection — whichever page you're on gets
+      an accent background.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Composing with dropdown_menu" %>
+    <%= sui.muted do %>
+      Need a dropdown under a nav item? Nest a <%= sui.code "dropdown_menu" %> inside
+      <%= sui.code "navigation_menu_item" %>. The wrapper is structural — it doesn't
+      assume a specific trigger type.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Composition — Rails helpers inside" %>
+    <%= sui.muted do %>
+      The shortcut form renders an anchor directly. Pass a block to get a styled
+      wrapper and put <%= sui.code "link_to" %> / <%= sui.code "button_to" %>
+      inside with full Rails options.
+    <% end %>
+
+    <% comp = <<~RUBY
+      sui.navigation_menu do |nav|
+        nav.item do
+          nav.link active: current_page?(docs_path) do
+            link_to "Docs", docs_path, data: { turbo_frame: "_top" }
+          end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock comp %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Args Description], rows: [
+      ["<code>sui.navigation_menu</code>", "<code>**opts</code>",                         "Root <code>&lt;nav&gt;</code> + <code>&lt;ul&gt;</code> wrapper; yields a <code>nav</code> proxy"],
+      ["<code>nav.item</code>",            "<code>content:, **opts</code>",               "Single <code>&lt;li&gt;</code>. With a <code>nav.trigger</code> inside, the rest of the block is that trigger's panel; <code>content:</code> is the panel's option hash"],
+      ["<code>nav.link</code>",            "<code>name, options, active:, **opts</code>", "Link inside an item. Auto-active via <code>current_page?</code>"],
+      ["<code>nav.trigger</code>",         "<code>name, **opts, &amp;block</code>",       "Styled tab that opens the item's panel on hover/focus (click toggles for touch)"],
+    ] %>
+  </div>
+</div>

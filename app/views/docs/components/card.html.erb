@@ -1,0 +1,92 @@
+<% content_for :title, "Card — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Card" %>
+    <%= sui.lead "A container that groups related content and actions with a bordered, elevated surface." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "card" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+
+    <%= live_example do %>
+      <%= sui.card(class: "w-[360px]") do |c| %>
+        <%= c.header do %>
+          <%= c.title "Account" %>
+          <%= c.description "Manage your account settings." %>
+        <% end %>
+        <%= c.content do %>
+          <%= tag.p "Card content goes here.", class: "text-sm text-muted-foreground" %>
+        <% end %>
+        <%= c.footer do %>
+          <%= sui.button "Save changes" %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">With action</h3>
+    <%= live_example do %>
+      <%= sui.card(class: "w-[360px]") do |c| %>
+        <%= c.header do %>
+          <%= c.title "Notifications" %>
+          <%= c.description "Choose what you want to be notified about." %>
+          <%= c.action do %>
+            <%= sui.button "Settings", variant: :outline, size: :sm %>
+          <% end %>
+        <% end %>
+        <%= c.content do %>
+          <%= tag.p "Notification preferences appear here.", class: "text-sm text-muted-foreground" %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Full form card</h3>
+    <%= live_example do %>
+      <%= sui.card(class: "w-[380px]") do |c| %>
+        <%= c.header do %>
+          <%= c.title "Create project" %>
+          <%= c.description "Deploy your new project in one click." %>
+          <%= c.action { sui.button "×", variant: :ghost } %>
+        <% end %>
+        <%= c.content do %>
+          <%= tag.div(class: "space-y-4") do %>
+            <%= tag.div(class: "space-y-2") do %>
+              <%= sui.label("Name", for_id: "project-name") %>
+              <%= sui.input(id: "project-name", placeholder: "My awesome project") %>
+            <% end %>
+            <%= tag.div(class: "space-y-2") do %>
+              <%= sui.label("Framework", for_id: "framework") %>
+              <%= sui.input(id: "framework", placeholder: "e.g. Rails, Next.js") %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <%= c.footer(class: "gap-2") do %>
+          <%= sui.button "Cancel", variant: :outline %>
+          <%= sui.button "Deploy" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Args Description], rows: [
+      ["<code>sui.card</code>",      "<code>**opts, &block</code>",            "Root card container (<code>div</code>); yields a <code>c</code> proxy."],
+      ["<code>c.header</code>",      "<code>**opts, &block</code>",            "Header grid; activates two-column layout when a <code>c.action</code> is present."],
+      ["<code>c.title</code>",       "<code>name = nil, **opts, &block</code>", "Semibold title text. Pass a string or a block."],
+      ["<code>c.description</code>", "<code>name = nil, **opts, &block</code>", "Muted description text below the title."],
+      ["<code>c.action</code>",      "<code>**opts, &block</code>",            "Slot that pins content to the top-right of the header."],
+      ["<code>c.content</code>",     "<code>**opts, &block</code>",            "Main body area with horizontal padding."],
+      ["<code>c.footer</code>",      "<code>**opts, &block</code>",            "Flex row at the bottom, typically used for action buttons."],
+    ] %>
+  </div>
+</div>

@@ -1,0 +1,209 @@
+<% content_for :title, "Data Grid — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Data Grid" %>
+    <%= sui.lead "A CSS grid with table semantics: columns that size like flex items, optional cards when narrow, a fixed header, pinned columns, cell selection and rows that stream in. For a plain semantic table, see Table." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "data_grid" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Compose <%= sui.code "sui.data_grid do |g|" %> with <%= sui.code "g.header" %>, <%= sui.code "g.body" %>,
+      <%= sui.code "g.row" %>, <%= sui.code "g.head" %>, <%= sui.code "g.cell" %>.
+      Wrap in a <%= sui.code "card" %> for the bordered look, or leave plain.
+    <% end %>
+
+    <%= live_example frame: false do %>
+      <%= sui.data_grid class: "rounded-lg border" do |g| %>
+        <%= g.header do %>
+          <%= g.row do %>
+            <%= g.head "Invoice" %>
+            <%= g.head "Status" %>
+            <%= g.head "Method" %>
+            <%= g.head "Amount", align: :end %>
+          <% end %>
+        <% end %>
+        <%= g.body do %>
+          <% [
+            {id: "INV001", status: "Paid",    method: "Credit Card",    amount: "$250.00"},
+            {id: "INV002", status: "Pending", method: "PayPal",         amount: "$150.00"},
+            {id: "INV003", status: "Unpaid",  method: "Bank Transfer",  amount: "$350.00"}
+          ].each do |inv| %>
+            <%= g.row do %>
+              <%= g.cell inv[:id], class: "font-medium" %>
+              <%= g.cell do %>
+                <%= sui.badge inv[:status], variant: (inv[:status] == "Paid" ? :default : :secondary) %>
+              <% end %>
+              <%= g.cell inv[:method] %>
+              <%= g.cell inv[:amount] %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With caption and footer" %>
+
+    <%= live_example frame: false do %>
+      <%= sui.data_grid class: "rounded-lg border" do |g| %>
+        <%= g.caption "A list of your recent invoices.", class: "text-center" %>
+        <%= g.header do %>
+          <%= g.row do %>
+            <%= g.head "Invoice" %>
+            <%= g.head "Amount", align: :end %>
+          <% end %>
+        <% end %>
+        <%= g.body do %>
+          <%= g.row { g.cell("INV001") + g.cell("$250.00") } %>
+          <%= g.row { g.cell("INV002") + g.cell("$150.00") } %>
+        <% end %>
+        <%= g.footer do %>
+          <%= g.row do %>
+            <%= g.cell "Total" %>
+            <%= g.cell "$400.00" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+  <%= sui.h2 "Responsive, fixed header, lazy rows" %>
+  <%= sui.muted do %>
+    Every feature at once. Each <%= sui.code "g.head" %> sizes and places its column, and the
+    options turn on cards, the fixed header, selection and editing; all of them are listed
+    under API below. Drag the corner of the dashed box to see the cards. Press Enter on a
+    cell, or just type, then Enter or Escape. Scroll the body for more rows.
+  <% end %>
+
+    <%= live_example frame: false do %>
+      <div class="@container min-w-80 max-w-full resize-x overflow-auto rounded-lg border border-dashed p-3">
+        <%= sui.data_grid cards: true, selectable: true, editor: "cell-editor",
+              class: "h-80 @xl:rounded-lg @xl:border" do |g| %>
+          <%= g.header fixed: true do %>
+            <%= g.row do %>
+              <%= g.head "Order",    width: :fit, card: :title, fixed: true %>
+              <%= g.head "Customer" %>
+              <%= g.head "Notes",    width: 2, min: "12rem" %>
+              <%= g.head "Ship to",  width: 1, min: "10rem" %>
+              <%= g.head "Status",   width: :fit, card: :aside %>
+              <%= g.head "Items",    width: :fit, align: :end %>
+              <%= g.head "Total",    width: :fit, align: :end %>
+              <%= g.head "Placed",   width: :fit, card: false %>
+              <%= g.head "Actions",  width: :fit, card: :footer, heading: false, fixed: true %>
+            <% end %>
+          <% end %>
+          <%= g.body id: "orders-body" do %>
+            <%= render "demos/order_rows", g: g, orders: demo_orders(1) %>
+            <%= render "demos/orders_loader", page: 2 %>
+          <% end %>
+        <% end %>
+      </div>
+      </div>
+    <% end %>
+
+    <%= sui.muted do %>
+      The reference editor, the row partial both paths share, the loader, the stream, the action
+      and route, and the demo data:
+    <% end %>
+    <%= source_block "app/javascript/controllers/cell_editor_controller.js" %>
+    <%= source_block "app/views/demos/_order_rows.html.erb" %>
+    <%= source_block "app/views/demos/more_orders.turbo_stream.erb" %>
+    <%= source_block "app/views/demos/_orders_loader.html.erb" %>
+    <%= source_block "app/controllers/demos_controller.rb", only: /  # Replaces the orders grid.*?  end\n/m %>
+    <%= source_block "config/routes.rb", only: /^.*more_orders.*$/ %>
+    <%= source_block "app/helpers/table_demo_helper.rb" %>
+  </div>
+
+    <div class="space-y-3">
+      <%= sui.h2 "Sizes" %>
+      <%= sui.muted do %>
+        <%= sui.code "size: :lg" %> relaxes row height and padding for index-style lists; data
+        grids keep the dense default. The size is set as <%= sui.code "data-size" %> on the table
+        and applied through descendant selectors, so <%= sui.code "g.head" %> and
+        <%= sui.code "g.cell" %> stay size-agnostic.
+      <% end %>
+
+      <%= live_example frame: false do %>
+        <%= sui.data_grid size: :lg, class: "rounded-lg border" do |g| %>
+          <%= g.header do %>
+            <%= g.row do %>
+              <%= g.head "Name" %>
+              <%= g.head "Role" %>
+            <% end %>
+          <% end %>
+          <%= g.body do %>
+            <%= g.row { g.cell("Ada Lovelace", class: "font-medium") + g.cell("Engineer") } %>
+            <%= g.row { g.cell("Grace Hopper", class: "font-medium") + g.cell("Admiral") } %>
+          <% end %>
+        <% end %>
+      <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Renders Notes], rows: [
+      ["<code>sui.data_grid</code>",            "<code>div[role=table]</code>",        "<code>role=grid</code> when selectable, inside a wrapper that <code>class:</code> lands on: give it a border, or a height for a fixed header. Options below. <code>columns:</code>, an array of column attribute hashes or labels, renders the header itself."],
+      ["<code>sui.data_grid_proxy</code>",      "—",                                   "Rows rendered outside a grid block, e.g. a Turbo stream appending to the body. No arguments: cells are stamped from their heading when the row lands."],
+      ["<code>g.header / body / footer</code>", "<code>div[role=rowgroup]</code>",     "<code>g.header fixed: true</code> makes the body the scroll box; with <code>columns:</code> it needs no block. A non-row child of the body, a loader frame say, spans every column. Header and footer are hidden in card mode."],
+      ["<code>g.row</code>",                    "<code>div[role=row]</code>",          "A subgrid of the grid, or a two-column card. Hover highlight, supports <code>data-state=\"selected\"</code>."],
+      ["<code>g.head</code>",                   "<code>div[role=columnheader]</code>", "Column attributes below, when no <code>columns:</code>."],
+      ["<code>g.cell</code>",                   "<code>div[role=cell]</code>",         "First arg or block for content. <code>colspan:</code> Integer or <code>:all</code>. <code>selectable: false</code> keeps the cell out of the selection."],
+      ["<code>g.caption</code>",                "<code>p</code>",                      "Renders below the wrapper, outside any border, linked to the grid by <code>aria-describedby</code>."],
+    ] %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h3 "Options" %>
+    <%= api_table headers: %w[Option Values Effect], rows: [
+      ["<code>cards:</code>",      "<code>false</code> (default), <code>true</code>, Integer",          "Rows become two-column cards below 36rem of the grid's own width, or below the given breakpoint in rem."],
+      ["<code>selectable:</code>", "<code>false</code> (default), <code>true</code>",                    "An ARIA grid with one selected cell: click or arrow keys, Home / End within the row, Ctrl+Home / End to the corners. Kept in view clear of pinned columns."],
+      ["<code>editor:</code>",     "a Stimulus identifier",                                              "Put on the grid's wrapper; the grid calls its <code>select</code>, <code>activate</code>, <code>commit</code>, <code>cancel</code> and <code>leave</code> methods when defined."],
+      ["<code>size:</code>",       "<code>:default</code>, <code>:lg</code>",                            "Row height and padding in grid layout."],
+    ] %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h3 "Column attributes" %>
+    <%= sui.muted do %>
+      On <%= sui.code "g.head" %>, or in each hash of <%= sui.code "columns:" %>.
+    <% end %>
+    <%= api_table headers: %w[Attribute Values Effect], rows: [
+      ["<code>width:</code>",   "<code>:auto</code> (default), <code>:fit</code>, Integer, String", "The column's track: <code>auto</code> takes its content width and wraps; <code>:fit</code> is <code>max-content</code>; an Integer <code>n</code> is <code>minmax(min, nfr)</code>, sharing the slack like a flex item; a String is a fixed length."],
+      ["<code>min:</code>",     "a length",                                                     "Floor for a flexible column. The scrollbar appears only once every column is at its floor."],
+      ["<code>max:</code>",     "a length",                                                     "Cap for <code>:auto</code> and <code>:fit</code>."],
+      ["<code>wrap:</code>",    "<code>true</code>",                                            "Flexible columns truncate with a tooltip; this wraps instead. Cards always wrap."],
+      ["<code>align:</code>",   "<code>:end</code>",                                            "Right-aligned heading and cells."],
+      ["<code>fixed:</code>",   "<code>true</code>",                                            "Kept in view while the rows scroll sideways: the first column pins at the start, any other at the end."],
+      ["<code>card:</code>",    "<code>:title</code>, <code>:aside</code>, <code>:footer</code>, <code>false</code>", "Placement in the card; the default is a label / value line with the heading as label. <code>false</code> leaves the column out."],
+      ["<code>order:</code>",   "Integer",                                                      "Position in the card."],
+      ["<code>heading:</code>", "<code>false</code>",                                           "Heading kept for screen readers but not shown."],
+    ] %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h3 "Editing" %>
+    <%= sui.muted do %>
+      Editing belongs to the app. The grid reports intent, as methods on the <%= sui.code "editor:" %>
+      controller and as cancelable <%= sui.code "data-grid:" %> events with the same
+      <%= sui.code "detail" %>. A cell is editing while focus sits inside it rather than on it, or
+      while <%= sui.code 'data-mode="editing"' %> is set on it; the arrow keys then belong to the
+      editor, the tooltip is off and the cell stops truncating.
+    <% end %>
+    <%= api_table headers: %w[Intent Detail When], rows: [
+      ["<code>select</code>",   "<code>from, to, row, column</code>", "The selected cell changed."],
+      ["<code>activate</code>", "<code>cell, via, key</code>",        "Enter, F2, double-click or a typed key on the selected cell; <code>via</code> says which."],
+      ["<code>commit</code>",   "<code>cell</code>",                  "Enter while editing."],
+      ["<code>cancel</code>",   "<code>cell</code>",                  "Escape while editing."],
+      ["<code>leave</code>",    "<code>cell, to</code>",              "Focus left an editing cell for <code>to</code>. Not raised when the app removes the editor itself."],
+    ] %>
+  </div>
+</div>

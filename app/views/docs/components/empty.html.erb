@@ -1,0 +1,68 @@
+<% content_for :title, "Empty — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Empty" %>
+    <%= sui.lead "A placeholder for empty data states — shows an icon, title, description, and an action." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "empty" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Compose with <%= sui.code "e.header" %>, <%= sui.code "e.media" %>,
+      <%= sui.code "e.title" %>, <%= sui.code "e.description" %>, and
+      <%= sui.code "e.content" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.empty do |e| %>
+        <%= e.header do %>
+          <%= e.media(variant: :icon) do %>
+            <%= sui.icon(:search) %>
+          <% end %>
+          <%= e.title "No results found" %>
+          <%= e.description "Try adjusting your search or filter to find what you're looking for." %>
+        <% end %>
+        <%= e.content do %>
+          <%= sui.button "Clear filters", variant: :outline %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Without media" %>
+    <%= sui.muted "The media slot is optional." %>
+
+    <%= live_example do %>
+      <%= sui.empty do |e| %>
+        <%= e.header do %>
+          <%= e.title "No projects yet" %>
+          <%= e.description "Get started by creating your first project." %>
+        <% end %>
+        <%= e.content do %>
+          <%= sui.button "New project" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.empty</code>",      "<code>**opts</code>",               "—",      "Dashed-border container, centers everything; yields an <code>e</code> proxy"],
+      ["<code>e.header</code>",       "<code>**opts</code>",               "—",      "Wraps media + title + description"],
+      ["<code>e.media</code>",        "<code>variant: :default, :icon</code>", "—",  "Icon container; <code>:icon</code> wraps in a muted square"],
+      ["<code>e.title</code>",        "<code>name</code>",                 "—",      "Heading text"],
+      ["<code>e.description</code>",  "<code>name</code>",                 "—",      "Muted supporting text"],
+      ["<code>e.content</code>",      "<code>**opts</code>",               "—",      "Action area below the header (buttons, links)"],
+    ] %>
+  </div>
+</div>

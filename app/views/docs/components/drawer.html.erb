@@ -1,0 +1,225 @@
+<% content_for :title, "Drawer — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Drawer" %>
+    <%= sui.lead "A slide-in panel anchored to any edge of the viewport — supports right, left, top, and bottom sides with animated open/close transitions." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "drawer" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      The block is the drawer panel; <%= sui.code "drawer.trigger" %> marks
+      what opens it — the same shape as <%= sui.code "sui.dialog" %>. Child
+      parts (<%= sui.code "drawer.header" %>, …) live on the proxy.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.drawer do |drawer| %>
+        <%= drawer.trigger { sui.button "Open drawer", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Drawer" %>
+          <%= drawer.description "Side panel content goes here." %>
+        <% end %>
+        <div class="p-4 text-sm">Body content.</div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sides" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "side:" %> to <%= sui.code "sui.drawer" %> — one of <%= sui.code ":right" %> (default), <%= sui.code ":left" %>, <%= sui.code ":top" %>, <%= sui.code ":bottom" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <div class="flex flex-wrap gap-2">
+        <%= sui.drawer do |drawer| %>
+          <%= drawer.trigger { sui.button "Right (default)", variant: :outline } %>
+          <%= drawer.header do %>
+            <%= drawer.title "Right drawer" %>
+            <%= drawer.description "Slides in from the right." %>
+          <% end %>
+          <div class="p-4 text-sm">Content panel.</div>
+        <% end %>
+
+        <%= sui.drawer side: :left do |drawer| %>
+          <%= drawer.trigger { sui.button "Left", variant: :outline } %>
+          <%= drawer.header do %>
+            <%= drawer.title "Left drawer" %>
+            <%= drawer.description "Slides in from the left." %>
+          <% end %>
+          <div class="p-4 text-sm">Content panel.</div>
+        <% end %>
+
+        <%= sui.drawer side: :top do |drawer| %>
+          <%= drawer.trigger { sui.button "Top", variant: :outline } %>
+          <%= drawer.header do %>
+            <%= drawer.title "Top drawer" %>
+            <%= drawer.description "Slides down from the top." %>
+          <% end %>
+          <div class="p-4 text-sm">Content panel.</div>
+        <% end %>
+
+        <%= sui.drawer side: :bottom do |drawer| %>
+          <%= drawer.trigger { sui.button "Bottom", variant: :outline } %>
+          <%= drawer.header do %>
+            <%= drawer.title "Bottom drawer" %>
+            <%= drawer.description "Slides up from the bottom." %>
+          <% end %>
+          <div class="p-4 text-sm">Content panel.</div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Settings drawer" %>
+    <%= sui.muted "A practical example with a header, scrollable body, and sticky footer." %>
+
+    <%= live_example do %>
+      <%= sui.drawer do |drawer| %>
+        <%= drawer.trigger { sui.button "Settings", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Settings" %>
+          <%= drawer.description "Manage your account preferences." %>
+        <% end %>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <%= sui.label "Dark mode" %>
+            <%= sui.switch name: "dark_mode" %>
+          </div>
+          <div class="flex items-center justify-between">
+            <%= sui.label "Notifications" %>
+            <%= sui.switch name: "notifications", checked: true %>
+          </div>
+        </div>
+        <%= drawer.footer do %>
+          <%= sui.button "Save changes" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Inset sheet" %>
+    <%= sui.muted do %>
+      A floating sheet with a gap around it is just classes on the panel. The
+      sides already anchor it with <%= sui.code "inset-y-0" %>, so a margin
+      insets it; <%= sui.code "h-auto" %> lets the top and bottom insets set
+      the height instead of <%= sui.code "h-full" %>, and
+      <%= sui.code "rounded-xl border" %> closes the frame on the side that
+      no longer touches the edge.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.drawer content: { class: "m-4 h-auto rounded-xl border translate-x-[calc(100%+1rem)]" } do |drawer| %>
+        <%= drawer.trigger { sui.button "Inset sheet", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Inset sheet" %>
+          <%= drawer.description "Floats with a gap on every side." %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizing" %>
+    <%= sui.muted do %>
+      Left and right sheets are <%= sui.code "w-3/4 max-w-sm" %>; top and
+      bottom already take their height from the content. Classes on
+      <%= sui.code "content:" %> replace those defaults, so
+      <%= sui.code "w-fit" %> gives a sheet as wide as what is in it.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.drawer content: { class: "w-fit" } do |drawer| %>
+        <%= drawer.trigger { sui.button "Content-sized", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Jump to" %>
+        <% end %>
+        <nav class="flex flex-col gap-1 p-4 pt-0">
+          <% %w[Dashboard Reports Settings].each do |item| %>
+            <%= sui.link_to item, "#", variant: :ghost, class: "justify-start" %>
+          <% end %>
+        </nav>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      For a width that follows the page, set the fractions per breakpoint and
+      lift the default cap with <%= sui.code "max-w-none" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.drawer content: { class: "w-full max-w-none sm:w-2/3 lg:w-1/2 xl:w-1/3" } do |drawer| %>
+        <%= drawer.trigger { sui.button "Responsive width", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Responsive sheet" %>
+          <%= drawer.description "Full width on a phone, a third of the page on a wide screen." %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      A bottom sheet already spans the viewport, so a max width plus
+      <%= sui.code "sm:mx-auto" %> turns it into a centred panel on larger
+      screens — one component, phone and desktop layouts.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.drawer side: :bottom, content: { class: "sm:max-w-md sm:mx-auto sm:rounded-t-xl sm:border-x" } do |drawer| %>
+        <%= drawer.trigger { sui.button "Bottom sheet", variant: :outline } %>
+        <%= drawer.header do %>
+          <%= drawer.title "Share" %>
+          <%= drawer.description "Anyone with the link can view this page." %>
+        <% end %>
+        <%= drawer.footer do %>
+          <%= drawer.close "Done" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Lazy loading and triggers" %>
+    <%= sui.muted do %>
+      Drawer takes the same lazy-loading and trigger options as
+      <%= sui.code "sui.dialog" %>: <%= sui.code "src:" %> /
+      <%= sui.code "reload:" %> / <%= sui.code "loading:" %> fetch the panel
+      via a Turbo Frame, the <%= sui.code "drawer:" %> kwarg on
+      <%= sui.code "sui.button" %> takes a Hash to wrap the button or a
+      String id to open a drawer from anywhere in the page.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button "Lazy drawer", variant: :outline,
+            drawer: { src: lazy_hover_card_content_path,
+                      loading: sui.skeleton(class: "h-24") } %>
+
+      <%= sui.button "Detached trigger", variant: :outline, drawer: "detached-demo-drawer" %>
+      <%= sui.drawer src: lazy_hover_card_content_path, side: :left, id: "detached-demo-drawer" %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.drawer</code>", "<code>side:, src:, reload:, loading:, content:, **opts</code>", "<code>:right</code>", "Wrapper; the block body is the panel (backdrop + edge-anchored sheet). <code>side:</code> is <code>:right</code> <code>:left</code> <code>:top</code> <code>:bottom</code>; <code>content:</code> is the panel's option hash. <code>src:</code> lazy-loads the panel via Turbo Frame (body or <code>loading:</code> = loading state)"],
+      ["<code>sui.drawer_proxy</code>", "—", "—", "Returns a bare proxy for lazy-loaded partials rendered inside a Turbo Frame"],
+      ["<code>drawer.trigger</code>", "<code>&amp;block</code>", "—", "Marks which part of the block is the trigger; your markup, verbatim — click-to-open is bound on the wrapper. Mark one element <code>data-slot=\"drawer-trigger\"</code> to scope it in composite triggers"],
+      ["<code>drawer.close</code>", "<code>name, **opts</code>", "—", "Wraps content so clicking it closes the drawer (use in footer)"],
+      ["<code>drawer.header</code>", "<code>**opts</code>", "—", "Padded flex column for title and description"],
+      ["<code>drawer.footer</code>", "<code>**opts</code>", "—", "Sticky bottom area with padding for action buttons"],
+      ["<code>drawer.title</code>", "<code>name</code>", "<code>nil</code>", "Semibold heading rendered as <code>h2</code>"],
+      ["<code>drawer.description</code>", "<code>name</code>", "<code>nil</code>", "Muted supporting text rendered as <code>p</code>"],
+    ] %>
+  </div>
+</div>

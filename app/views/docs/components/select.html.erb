@@ -1,0 +1,52 @@
+<% content_for :title, "Select — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Select" %>
+    <%= sui.lead "A native <select> with a shadcn chevron. Uses the browser's dropdown — no JS, works with form submissions automatically." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "select" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 2, class: "max-w-xs" do %>
+        <%= sui.label "Plan", for: "plan" %>
+        <%= sui.select(id: "plan", name: "plan") do %>
+          <%= options_for_select([["Hobby", "hobby"], ["Pro", "pro"], ["Team", "team"]], "pro") %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.select(name: "small", size: :sm, class: "w-fit") do %>
+        <%= options_for_select(["Small size", "Second"]) %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Themed list" %>
+    <%= sui.muted do %>
+      The browser draws a native select's option list, so the theme stops at the closed
+      control. Chromium's customizable select, <%= sui.code "appearance: base-select" %> on the
+      select and on its <%= sui.code "::picker(select)" %>, turns the list into an ordinary box
+      that CSS styles like a popover. Engines without it keep their own list, so this is pure
+      enhancement: the same markup, one class.
+    <% end %>
+    <%= source_block "app/assets/tailwind/application.css", only: /\/\* Native select.*?::checkmark \{[^}]*\}\n/m %>
+
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 2, class: "max-w-xs" do %>
+        <%= sui.label "Plan", for: "themed-plan" %>
+        <%= sui.select(id: "themed-plan", name: "themed_plan", class: "select-themed w-56") do %>
+          <%= options_for_select([["Hobby", "hobby"], ["Pro", "pro"], ["Team", "team"]], "pro") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<% content_for :title, "Collapsible — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Collapsible" %>
+    <%= sui.lead "An interactive disclosure that toggles visibility of its content. Small Stimulus controller; composes with sidebar menu sub-items, FAQ-style details, filter panels." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "collapsible" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= sui.muted do %>
+      Click the trigger to show / hide the content. Pass <%= sui.code "open: true" %>
+      on the root to start expanded.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.collapsible open: false, class: "w-80 rounded-md border p-3 space-y-2" do |c| %>
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium">@shadcn starred 3 repositories</span>
+          <%= c.trigger do %>
+            <%= sui.button variant: :ghost, size: :"icon-sm", "aria-label": "Toggle" do %>
+              <%= c.chevron %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="text-sm rounded-md border px-3 py-2">@radix-ui/primitives</div>
+        <%= c.content class: "space-y-2" do %>
+          <div class="text-sm rounded-md border px-3 py-2">@radix-ui/colors</div>
+          <div class="text-sm rounded-md border px-3 py-2">@stitches/react</div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Composing with sidebar_menu_button" %>
+    <%= sui.muted do %>
+      In a sidebar sub-section, the menu button IS the trigger — pass
+      <%= sui.code "collapsible: true" %> and it wires the toggle action itself
+      instead of nesting a <%= sui.code "collapsible_trigger" %> inside.
+      <%= sui.code "s.collapsible flyout: true" %> additionally shows the
+      content as a hover flyout while the sidebar is collapsed to its icon rail.
+    <% end %>
+
+    <% code = <<~RUBY
+      sui.sidebar_wrapper do |s|
+        s.collapsible open: true, flyout: true do |c|
+          s.menu_item do
+            s.menu_button "Docs", collapsible: true, icon: :folder do
+              c.chevron
+            end
+          end
+
+          c.content do
+            s.menu_sub do
+              s.menu_sub_item { s.menu_sub_button "Introduction", "#" }
+              s.menu_sub_item { s.menu_sub_button "Installation", "#" }
+            end
+          end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Args Description], rows: [
+      ["<code>sui.collapsible</code>", "<code>open:, content:, **opts</code>", "Root. Mounts the <code>shadcnrb--collapsible--component</code> controller; sets initial <code>data-state</code>. Yields a <code>c</code> proxy. <code>content:</code> are default options for <code>c.content</code>. Takes the overlay kwargs <code>sui.button</code> takes (<code>dropdown_menu:</code>, <code>dialog:</code>, …), wrapping the whole collapsible as that overlay's trigger; <code>hover_card: { panel: }</code> (or <code>dropdown_menu:</code>) naming the content's id turns the same list into a flyout."],
+      ["<code>c.trigger</code>", "<code>&amp;block</code>", "Layout-neutral wrapper that makes your markup the toggle — your element, verbatim, rendered in place. Alternatively stamp <code>data-action=\"click->shadcnrb--collapsible--component#toggle\"</code> onto an existing element (what <code>s.menu_button collapsible: true</code> does)."],
+      ["<code>c.content</code>", "<code>**opts</code>", "Panel shown when <code>data-state=\"open\"</code>. Uses <code>hidden data-[state=open]:block</code>; stays out of layout when closed."],
+      ["<code>c.chevron</code>", "<code>name = :\"chevron-down\", **opts</code>", "Rotating chevron icon that flips when the surrounding collapsible is open."],
+    ] %>
+  </div>
+</div>

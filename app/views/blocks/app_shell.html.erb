@@ -1,0 +1,21 @@
+<% content_for :title, "App Shell block — shadcnrb" %>
+
+<%= sui.layout.container size: :xl, class: "py-10 space-y-8" do %>
+  <div class="space-y-2">
+    <%= sui.h1 "App Shell" %>
+    <%= sui.lead "A settings-style app shell using the inset sidebar — detached card main area with icon-collapsible nav." %>
+  </div>
+
+  <%= block_example "app_shell", height: 1180 %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "What this demonstrates" %>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li><%= sui.code "sidebar_wrapper" %> + <%= sui.code "sidebar variant: :inset" %> → detached rounded main card.</li>
+      <li><%= sui.code "collapsible: :icon" %> → click the trigger in the header to collapse nav to an icon rail.</li>
+      <li><%= sui.code "sidebar_menu_badge" %> on Members / Invitations; active state on Profile via <%= sui.code "active:" %>.</li>
+      <li><%= sui.code "sidebar_inset_header" %> is sticky; <%= sui.code "sidebar_inset_content" %> scrolls beneath it.</li>
+      <li>Body content uses <%= sui.code "sui.layout" %> primitives — no raw flex divs.</li>
+    </ul>
+  </div>
+<% end %>

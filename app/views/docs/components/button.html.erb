@@ -1,0 +1,132 @@
+<% content_for :title, "Button — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Button" %>
+    <%= sui.lead do %>
+      Triggers an action or event — wraps a plain HTML <%= sui.code "button" %> with Tailwind variants and sizes.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "button" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Pass a label as the first argument or use a block. All extra kwargs are forwarded to the underlying <%= sui.code "button" %> tag.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button "Save changes" %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button do %>Custom label<% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Variants" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "variant:" %> to control the visual style.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- variant: :default -->
+      <%= sui.button "Default", variant: :default %>
+      <!-- variant: :destructive -->
+      <%= sui.button "Destructive", variant: :destructive %>
+      <!-- variant: :outline -->
+      <%= sui.button "Outline", variant: :outline %>
+      <!-- variant: :secondary -->
+      <%= sui.button "Secondary", variant: :secondary %>
+      <!-- variant: :ghost -->
+      <%= sui.button "Ghost", variant: :ghost %>
+      <!-- variant: :link -->
+      <%= sui.button "Link", variant: :link %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "size:" %> to adjust the button height and padding.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- size: :sm -->
+      <%= sui.button "Small", size: :sm %>
+      <!-- size: :default -->
+      <%= sui.button "Default", size: :default %>
+      <!-- size: :lg -->
+      <%= sui.button "Large", size: :lg %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With icon" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "icon:" %> for a leading icon. Without a label, the
+      button renders icon-only at the <%= sui.code ":icon" %> size. With a
+      label, the icon sits flush left of the text. For trailing icons or
+      custom layouts, use a block.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- icon + text -->
+      <%= sui.button "Save", icon: :check %>
+      <!-- icon only (auto size: :icon) -->
+      <%= sui.button icon: :settings %>
+      <!-- icon-only, outline variant -->
+      <%= sui.button icon: :"chevron-right", variant: :outline %>
+      <!-- trailing icon via block -->
+      <%= sui.button variant: :outline do %>
+        Continue <%= sui.icon :"chevron-right" %>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      Icon-only buttons respect the same size variants as text buttons.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- size: :sm -->
+      <%= sui.button icon: :settings, size: :sm %>
+      <!-- size: :default (default when icon + no label) -->
+      <%= sui.button icon: :settings %>
+      <!-- size: :lg -->
+      <%= sui.button icon: :settings, size: :lg %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Rails helpers" %>
+    <%= sui.muted do %>
+      <%= sui.code "sui.button_to" %> generates a mini-form (CSRF + Turbo-safe).
+      For button-styled anchors, use <%= sui.code "sui.link_to" %> with any Button variant — see <%= link_to "Link", docs_component_path("link"), class: "underline underline-offset-4 font-medium" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button_to "Post action", "#", method: :post, variant: :secondary %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Prop Type Default Description], rows: [
+      ["<code>variant</code>", "Symbol", "<code>:default</code>", "Visual style — one of <code>:default</code> <code>:destructive</code> <code>:outline</code> <code>:secondary</code> <code>:ghost</code> <code>:link</code>"],
+      ["<code>size</code>", "Symbol", "<code>:default</code>", "Button size — one of <code>:xs</code> <code>:sm</code> <code>:default</code> <code>:lg</code> <code>:icon</code>"],
+      ["<code>name</code>", "String", "<code>nil</code>", "Label text when no block is given"],
+      ["<code>type</code>", "String", "<code>\"button\"</code>", "HTML button type attribute (<code>\"button\"</code>, <code>\"submit\"</code>, <code>\"reset\"</code>)"],
+    ] %>
+  </div>
+
+  <%= sui.muted do %>
+    Next: <%= link_to "Badge", docs_component_path("badge"), class: "underline underline-offset-4 font-medium" %> →
+  <% end %>
+</div>

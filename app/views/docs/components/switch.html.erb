@@ -1,0 +1,104 @@
+<% content_for :title, "Switch — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Switch" %>
+    <%= sui.lead do %>
+      A toggle control for binary on/off state — renders as a styled <%= sui.code "button[role=switch]" %> with optional hidden inputs for form submission.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "switch" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Call <%= sui.code "sui.switch" %> with no arguments for a standalone toggle.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- default (off) -->
+      <%= sui.switch %>
+      <!-- checked: true -->
+      <%= sui.switch checked: true %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With label" %>
+    <%= sui.muted do %>
+      Pair the switch with <%= sui.code "sui.label" %> inside a flex container.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- default (off) -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch name: "notifications" %>
+        <%= sui.label "Enable notifications" %>
+      </div>
+      <!-- checked: true -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch name: "marketing", checked: true %>
+        <%= sui.label "Marketing emails" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "size:" %> to choose between <%= sui.code ":sm" %> and <%= sui.code ":default" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- size: :sm -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch size: :sm %>
+        <%= sui.label "Small" %>
+      </div>
+      <!-- size: :default -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch size: :default %>
+        <%= sui.label "Default" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Disabled" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "disabled: true" %> to prevent interaction.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- disabled (off) -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch disabled: true %>
+        <%= sui.label "Disabled (off)" %>
+      </div>
+      <!-- checked: true, disabled: true -->
+      <div class="flex items-center gap-3">
+        <%= sui.switch checked: true, disabled: true %>
+        <%= sui.label "Disabled (on)" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Prop Type Default Description], rows: [
+      ["<code>name</code>", "String", "<code>nil</code>", "Form field name; enables hidden inputs for form submission when set"],
+      ["<code>checked</code>", "Boolean", "<code>false</code>", "Initial checked state of the switch"],
+      ["<code>value</code>", "String", "<code>\"1\"</code>", "Value submitted when the switch is on"],
+      ["<code>unchecked_value</code>", "String", "<code>\"0\"</code>", "Value always submitted via hidden input when switch is off"],
+      ["<code>include_hidden</code>", "Boolean", "<code>true</code>", "Whether to render hidden inputs for form submission (requires <code>name</code>)"],
+      ["<code>disabled</code>", "Boolean", "<code>false</code>", "Disables interaction and applies reduced-opacity styling"],
+      ["<code>size</code>", "Symbol", "<code>:default</code>", "Toggle size — <code>:default</code> or <code>:sm</code>"],
+    ] %>
+  </div>
+</div>

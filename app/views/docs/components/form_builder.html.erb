@@ -1,0 +1,233 @@
+<% content_for :title, "FormBuilder — shadcnrb" %>
+
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "FormBuilder" %>
+    <%= sui.lead "A Rails-native FormBuilder subclass that injects shadcnrb classes into every field. Pass builder: Shadcnrb::FormBuilder::Component to form_with." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "form_builder" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Thin API — classic Rails" %>
+    <%= sui.muted do %>
+      Every Rails field helper still works. The builder just injects the matching
+      shadcnrb component's classes, so <%= sui.code "f.text_field :email" %> renders
+      the same input as <%= sui.code "sui.input" %>. Labels, inputs, selects stay
+      as separate calls — you compose the layout.
+    <% end %>
+
+    <%= live_example do %>
+      <%= form_with scope: :user, url: "#", builder: Shadcnrb::FormBuilder::Component, class: "max-w-md space-y-4" do |f| %>
+        <%= sui.layout.stack gap: 2 do %>
+          <%= f.label :name %>
+          <%= f.text_field :name %>
+        <% end %>
+        <%= sui.layout.stack gap: 2 do %>
+          <%= f.label :email %>
+          <%= f.email_field :email %>
+        <% end %>
+        <%= sui.layout.stack gap: 2 do %>
+          <%= f.label :bio %>
+          <%= f.text_area :bio, rows: 3 %>
+        <% end %>
+        <%= sui.layout.stack gap: 2 do %>
+          <%= f.label :plan %>
+          <%= f.select :plan, [["Hobby","hobby"],["Pro","pro"],["Team","team"]] %>
+        <% end %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= f.check_box :terms %>
+          <%= f.label :terms, "Accept terms" %>
+        <% end %>
+        <%= f.submit "Save" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Bundled shortcut — f.field" %>
+    <%= sui.muted do %>
+      When you want the label + control + hint/error layout without writing the stack manually,
+      use <%= sui.code "f.field" %>. Uses the <%= sui.code "form_field" %> component and
+      automatically pulls error messages from the model.
+    <% end %>
+
+    <%= live_example do %>
+      <%= form_with scope: :user, url: "#", builder: Shadcnrb::FormBuilder::Component, class: "max-w-md space-y-4" do |f| %>
+        <%= f.field :name, label: "Display name", hint: "How you appear to others." %>
+        <%= f.field :email, label: "Email", as: :email_field, hint: "We'll never share this." %>
+        <%= f.field :bio, label: "Bio", as: :text_area, hint: "Max 160 chars." %>
+        <%= f.submit "Save" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Buttons — f.button" %>
+    <%= sui.muted do %>
+      <%= sui.code "f.button" %> renders through <%= sui.code "sui.button" %>,
+      so <%= sui.code "icon:" %>, <%= sui.code "variant:" %> and
+      <%= sui.code "size:" %> all work and the markup matches a standalone
+      button. Defaults to <%= sui.code "type: :submit" %>; the label falls
+      back to the model-derived default like <%= sui.code "f.submit" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= form_with scope: :user, url: "#", builder: Shadcnrb::FormBuilder::Component do |f| %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= f.button "Save", icon: :check %>
+          <%= f.button "Discard", variant: :outline, type: :button %>
+          <%= f.button variant: :ghost, size: :icon, icon: :settings, "aria-label": "Settings" %>
+          <%= f.button %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Controlling width" %>
+    <%= sui.muted do %>
+      Inputs are <%= sui.code "w-full" %> by default, so field width is controlled by
+      the <strong>parent</strong>. Pass <%= sui.code "class:" %> on the form (or a
+      <%= sui.code "sui.layout.container" %> wrapper) to set a max-width, or use
+      <%= sui.code "sui.layout.grid" %> to arrange fields side-by-side.
+    <% end %>
+
+    <%= live_example do %>
+      <%= form_with scope: :user, url: "#", builder: Shadcnrb::FormBuilder::Component, class: "max-w-2xl space-y-4" do |f| %>
+        <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-2" do %>
+          <%= f.field :first_name, label: "First name" %>
+          <%= f.field :last_name,  label: "Last name" %>
+        <% end %>
+        <%= f.field :email, label: "Email", as: :email_field, hint: "Spans full width of the form." %>
+        <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-3" do %>
+          <%= f.field :city,     label: "City" %>
+          <%= f.field :region,   label: "Region" %>
+          <%= f.field :postcode, label: "Postcode" %>
+        <% end %>
+        <%= f.submit "Save" %>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      For a single field, wrap it in any layout primitive with a width class —
+      <%= sui.code 'sui.layout.stack(class: "max-w-xs")' %>, <%= sui.code 'class: "w-96"' %>, etc.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 2, class: "max-w-xs" do %>
+        <%= sui.label "Tight field", for: "tight" %>
+        <%= sui.input id: "tight", placeholder: "max-w-xs" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Kitchen sink — every form input" %>
+    <%= sui.muted do %>
+      Every field type wired through <%= sui.code "Shadcnrb::FormBuilder::Component" %>, with some
+      bare component calls (<%= sui.code "sui.switch" %>, <%= sui.code "sui.radio_group" %>)
+      mixed in where the FormBuilder doesn't have a direct equivalent.
+    <% end %>
+
+    <%= live_example do %>
+      <%= form_with scope: :profile, url: "#", builder: Shadcnrb::FormBuilder::Component, class: "max-w-2xl space-y-6" do |f| %>
+        <%= sui.h3 "Text inputs" %>
+        <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-2" do %>
+          <%= f.field :name,     label: "Name",     as: :text_field %>
+          <%= f.field :email,    label: "Email",    as: :email_field %>
+          <%= f.field :password, label: "Password", as: :password_field %>
+          <%= f.field :phone,    label: "Phone",    as: :telephone_field %>
+          <%= f.field :url,      label: "Website",  as: :url_field %>
+          <%= f.field :search,   label: "Search",   as: :search_field %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Numeric / date / time / color" %>
+        <%= sui.layout.grid cols: 1, gap: 4, class: "md:grid-cols-3" do %>
+          <%= f.field :age,       label: "Age",       as: :number_field %>
+          <%= f.field :birthday,  label: "Birthday",  as: :date_field %>
+          <%= f.field :meeting,   label: "Meeting",   as: :datetime_local_field %>
+          <%= f.field :alarm,     label: "Alarm",     as: :time_field %>
+          <%= f.field :theme,     label: "Color",     as: :color_field %>
+          <%= f.field :volume,    label: "Volume",    as: :range_field %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Multi-line and file" %>
+        <%= f.field :bio,  label: "Bio",    as: :text_area,  hint: "A short description, max 160 chars." %>
+        <%= f.field :file, label: "Avatar", as: :file_field, hint: "PNG or JPG, up to 2 MB." %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Select" %>
+        <%= sui.layout.stack gap: 2, class: "max-w-xs" do %>
+          <%= f.label :plan %>
+          <%= f.select :plan, [["Hobby","hobby"],["Pro","pro"],["Team","team"]] %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Radios" %>
+        <%= sui.muted { "FormBuilder emits bare radio inputs — wrap in sui.radio_group for the styled grouping." } %>
+        <%= sui.radio_group do %>
+          <% %w[email sms push none].each do |v| %>
+            <%= sui.layout.row gap: 2 do %>
+              <%= f.radio_button :contact, v, id: "contact-#{v}" %>
+              <%= f.label :contact, v.titleize, value: v, for: "contact-#{v}" %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Checkboxes" %>
+        <%= sui.layout.stack gap: 2 do %>
+          <% [[:terms, "Accept the terms"], [:newsletter, "Send me occasional updates"], [:beta, "Opt in to beta features"]].each do |(field, label)| %>
+            <%= sui.layout.row gap: 2 do %>
+              <%= f.check_box field %>
+              <%= f.label field, label %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.h3 "Switch (bare component)" %>
+        <%= sui.muted { "Switch is a standalone component — not a FormBuilder method. Name it manually to submit." } %>
+        <%= sui.layout.row gap: 2 do %>
+          <%= sui.switch id: "2fa", name: "profile[two_factor]" %>
+          <%= sui.label "Enable two-factor auth", for: "2fa" %>
+        <% end %>
+
+        <%= sui.separator %>
+
+        <%= sui.layout.row gap: 2, justify: :end do %>
+          <%= sui.button "Cancel", variant: :outline %>
+          <%= f.submit "Save profile" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Methods overridden" %>
+    <%= sui.muted do %>
+      Each injects the matching component's class string. You can still pass
+      <%= sui.code "class:" %> to merge additional Tailwind.
+    <% end %>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li><strong>Text-like:</strong> text_field, email_field, password_field, number_field, date_field, datetime_field, datetime_local_field, time_field, month_field, week_field, url_field, tel_field, phone_field, search_field, color_field, file_field, range_field</li>
+      <li><strong>Multi-line / choice:</strong> text_area, select, check_box, radio_button</li>
+      <li><strong>Copy:</strong> label (with automatic humanization)</li>
+      <li><strong>Submit / action:</strong> submit, button (via <code>sui.button</code>)</li>
+      <li><strong>Bundled:</strong> field(method, label:, hint:, as:)</li>
+    </ul>
+  </div>
+</div>

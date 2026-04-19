@@ -1,0 +1,159 @@
+<% content_for :title, "Link — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Link" %>
+    <%= sui.lead "One styled anchor helper that spans from inline prose to button-styled CTA." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "link" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Mirrors Rails' <%= sui.code "link_to" %> signature. Default is the prose
+      underline (<%= sui.code "variant: :link" %>); pass any Button variant
+      (<%= sui.code ":default" %>, <%= sui.code ":outline" %>, etc.) for a
+      button-styled anchor.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.link_to "Read more", "#" %>
+    <% end %>
+
+    <%= sui.muted do %>
+      Block form works like Rails too — the first argument is the URL and the
+      block is the content.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.link_to docs_component_path("badge") do %>
+        Badge docs <%= sui.icon :"chevron-right" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Prose variants" %>
+    <%= sui.muted do %>
+      Inline text styling — for paragraphs, table cells, nav text.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- variant: :link -->
+      <%= sui.link_to "Link", "#", variant: :link %>
+      <!-- variant: :underline -->
+      <%= sui.link_to "Underline", "#", variant: :underline %>
+      <!-- variant: :muted -->
+      <%= sui.link_to "Muted", "#", variant: :muted %>
+      <!-- variant: :foreground -->
+      <%= sui.link_to "Foreground", "#", variant: :foreground %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Button-style variants" %>
+    <%= sui.muted do %>
+      Same visual variants as <%= sui.code "sui.button" %> — but rendered as
+      an anchor so Rails' <%= sui.code "link_to" %> semantics (paths, Turbo,
+      target, etc.) flow through.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- variant: :default -->
+      <%= sui.link_to "Default", "#", variant: :default %>
+      <!-- variant: :outline -->
+      <%= sui.link_to "Outline", "#", variant: :outline %>
+      <!-- variant: :secondary -->
+      <%= sui.link_to "Secondary", "#", variant: :secondary %>
+      <!-- variant: :ghost -->
+      <%= sui.link_to "Ghost", "#", variant: :ghost %>
+      <!-- variant: :destructive -->
+      <%= sui.link_to "Destructive", "#", variant: :destructive %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      Prose variants use the Link size table (<%= sui.code ":sm" %> /
+      <%= sui.code ":default" %> / <%= sui.code ":lg" %>). Button-style
+      variants use the Button size table (adds <%= sui.code ":xs" %>,
+      <%= sui.code ":icon" %> variants, etc.).
+    <% end %>
+
+    <%= live_example do %>
+      <!-- prose size: :sm -->
+      <%= sui.link_to "Small link", "#", size: :sm %>
+      <!-- prose size: :default -->
+      <%= sui.link_to "Default link", "#" %>
+      <!-- prose size: :lg -->
+      <%= sui.link_to "Large link", "#", size: :lg %>
+      <!-- button-style :outline, size: :lg -->
+      <%= sui.link_to "Large button", "#", variant: :outline, size: :lg %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With icon" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "icon:" %> for a leading icon, or compose inline via a
+      block for more control. Works across prose and button-style variants.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- prose + leading icon -->
+      <%= sui.link_to "Back to index", "#", icon: :"chevron-left" %>
+      <!-- button-style + leading icon -->
+      <%= sui.link_to "New file", "#", variant: :default, icon: :plus %>
+      <!-- trailing icon via block -->
+      <%= sui.link_to "#", variant: :outline do %>
+        Read more <%= sui.icon :"chevron-right" %>
+      <% end %>
+      <!-- icon only (button-style, size :icon) -->
+      <%= sui.link_to "#", variant: :outline, size: :icon, icon: :settings, "aria-label": "Settings" %>
+    <% end %>
+
+    <%= sui.muted do %>
+      Icon-only button-style links respect the same size variants.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- size: :sm -->
+      <%= sui.link_to "#", variant: :outline, size: :sm, icon: :settings, "aria-label": "Settings" %>
+      <!-- size: :default -->
+      <%= sui.link_to "#", variant: :outline, size: :icon, icon: :settings, "aria-label": "Settings" %>
+      <!-- size: :lg -->
+      <%= sui.link_to "#", variant: :outline, size: :lg, icon: :settings, "aria-label": "Settings" %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "In prose" %>
+    <%= sui.muted do %>
+      Embed inline within paragraphs — text inherits the surrounding color
+      until hover.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.p do %>
+        Read the <%= sui.link_to "documentation", "#" %> or jump straight to <%= sui.link_to "examples", "#", variant: :underline %>.
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Arg Type Default Description], rows: [
+      ["<code>name</code>", "<code>String</code>", "<code>nil</code>", "Link text (or use a block)"],
+      ["<code>options</code>", "<code>String / Hash</code>", "<code>nil</code>", "Path or url_for-compatible options (same as Rails <code>link_to</code>)"],
+      ["<code>variant</code>", "<code>Symbol</code>", "<code>:link</code>", "Prose: <code>:link</code> <code>:underline</code> <code>:muted</code> <code>:foreground</code>. Button-style: <code>:default</code> <code>:destructive</code> <code>:outline</code> <code>:secondary</code> <code>:ghost</code>"],
+      ["<code>size</code>", "<code>Symbol</code>", "<code>:default</code>", "Prose sizes: <code>:sm</code> <code>:default</code> <code>:lg</code>. Button-style sizes match <code>sui.button</code>."],
+    ] %>
+  </div>
+</div>

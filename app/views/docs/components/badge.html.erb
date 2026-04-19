@@ -1,0 +1,65 @@
+<% content_for :title, "Badge — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Badge" %>
+    <%= sui.lead "A small inline label used to highlight status, counts, or categories." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "badge" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Pass a string as the first argument or use a block. Renders a <%= sui.code "span" %> with rounded-full pill styling.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- string arg -->
+      <%= sui.badge "New" %>
+      <!-- block form -->
+      <%= sui.badge do %>Beta<% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Variants" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "variant:" %> to choose a colour scheme.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- variant: :default -->
+      <%= sui.badge "Default", variant: :default %>
+      <!-- variant: :secondary -->
+      <%= sui.badge "Secondary", variant: :secondary %>
+      <!-- variant: :destructive -->
+      <%= sui.badge "Destructive", variant: :destructive %>
+      <!-- variant: :warning -->
+      <%= sui.badge "Warning", variant: :warning %>
+      <!-- variant: :outline -->
+      <%= sui.badge "Outline", variant: :outline %>
+      <!-- variant: :ghost -->
+      <%= sui.badge "Ghost", variant: :ghost %>
+      <!-- variant: :link -->
+      <%= sui.badge "Link", variant: :link %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Prop Type Default Description], rows: [
+      ["<code>variant</code>", "Symbol", "<code>:default</code>", "Colour scheme — one of <code>:default</code> <code>:secondary</code> <code>:destructive</code> <code>:warning</code> <code>:outline</code> <code>:ghost</code> <code>:link</code>"],
+      ["<code>name</code>", "String", "<code>nil</code>", "Label text when no block is given"],
+    ] %>
+  </div>
+
+  <%= sui.muted do %>
+    Next: <%= link_to "Avatar", docs_component_path("avatar"), class: "underline underline-offset-4 font-medium" %> →
+  <% end %>
+</div>

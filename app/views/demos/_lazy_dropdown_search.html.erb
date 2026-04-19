@@ -1,0 +1,10 @@
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+  <% m = sui.dropdown_menu_proxy %>
+  <div class="p-1">
+    <%= sui.input placeholder: "Find…", autofocus: true, class: "h-8" %>
+  </div>
+  <%= m.separator %>
+  <%= m.item "Apollo", "#" %>
+  <%= m.item "Orion",  "#" %>
+  <%= m.item "Helios", "#" %>
+</turbo-frame>

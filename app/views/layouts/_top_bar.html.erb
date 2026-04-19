@@ -1,0 +1,37 @@
+<!-- Shared by the marketing and docs layouts. `contained:` keeps the bar to
+     the page container (marketing); the docs pages run it full width above
+     the sidebar and add the width toggle. -->
+<% contained = local_assigns.fetch(:contained, true) %>
+<% width_toggle = local_assigns.fetch(:width_toggle, false) %>
+<header class="<%= contained ? "sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" : "shrink-0 border-b bg-background px-6" %>">
+  <% bar = capture do %>
+    <%= sui.layout.row justify: :between, class: "h-14" do %>
+      <%= sui.layout.row gap: 6 do %>
+        <%= link_to root_path, class: "flex items-center gap-2 font-bold" do %>
+          <%= sui.avatar(class: "h-7 w-7 rounded-md") { |a| a.fallback "S", class: "bg-primary text-primary-foreground rounded-md" } %>
+          <span>shadcnrb</span>
+        <% end %>
+        <%= sui.navigation_menu do |nav| %>
+          <%= nav.item { nav.link "Docs",   docs_path,   active: controller_name == "docs" } %>
+          <%= nav.item { nav.link "Blocks", blocks_path, active: controller_name == "blocks" } %>
+          <%= nav.item { nav.link "GitHub", "https://github.com/accountaim/shadcn-rb", target: "_blank", rel: "noopener" } %>
+        <% end %>
+      <% end %>
+      <%= sui.layout.row gap: 2 do %>
+        <%= style_switcher styles: shadcnrb_style_options %>
+        <% if width_toggle %>
+          <%= sui.button variant: :ghost, size: :"icon-sm", "aria-label": "Toggle full width", data: { action: "click->docs-width#toggle" } do %>
+            <%= sui.icon :"maximize-2", data: { docs_width_target: "expand" }, hidden: docs_full_width? %>
+            <%= sui.icon :"minimize-2", data: { docs_width_target: "collapse" }, hidden: !docs_full_width? %>
+          <% end %>
+        <% end %>
+        <%= sui.theme_switcher %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% if contained %>
+    <%= sui.layout.container(size: :xl) { bar } %>
+  <% else %>
+    <%= bar %>
+  <% end %>
+</header>

@@ -1,0 +1,167 @@
+<% content_for :title, "Layout — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Layout" %>
+    <%= sui.lead "Four primitives for the 95% of layouts: stack (vertical), row (horizontal), grid, container. Separate stack + row, not a direction param — defaults diverge enough that parameterizing it just pushes complexity to every call site." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "layout" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Stack" %>
+    <%= sui.muted do %>
+      Vertical flex, no wrap. <%= sui.code "gap:" %> maps to Tailwind's spacing scale;
+      <%= sui.code "align:" %> maps to <%= sui.code "items-*" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- gap: 2 -->
+      <%= sui.layout.stack gap: 2 do %>
+        <%= sui.badge "First" %>
+        <%= sui.badge "Second" %>
+        <%= sui.badge "Third" %>
+      <% end %>
+      <!-- gap: 4, align: :center -->
+      <%= sui.layout.stack gap: 4, align: :center, class: "w-full" do %>
+        <%= sui.button "Centered" %>
+        <%= sui.muted { "Everything in this stack is centered horizontally." } %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Row" %>
+    <%= sui.muted do %>
+      Horizontal flex. Defaults to <%= sui.code "items-center" %> + <%= sui.code "flex-wrap" %>.
+      Pass <%= sui.code "wrap: false" %> to disable wrapping, <%= sui.code "justify:" %> for
+      main-axis alignment.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- gap: 2 -->
+      <%= sui.layout.row gap: 2 do %>
+        <%= sui.button "One" %>
+        <%= sui.button "Two", variant: :outline %>
+        <%= sui.button "Three", variant: :secondary %>
+      <% end %>
+      <!-- gap: 4, justify: :between -->
+      <%= sui.layout.row gap: 4, justify: :between, class: "w-full" do %>
+        <%= sui.h3 "Settings" %>
+        <%= sui.button "Save" %>
+      <% end %>
+      <!-- wrap: false -->
+      <%= sui.layout.row gap: 2, wrap: false, class: "overflow-x-auto w-full" do %>
+        <% 12.times do |i| %>
+          <%= sui.badge "Tag #{i + 1}", variant: :secondary %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Grid" %>
+    <%= sui.muted do %>
+      CSS grid. <%= sui.code "cols:" %> maps to <%= sui.code "grid-cols-N" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.grid cols: 3, gap: 4 do %>
+        <% 3.times do |i| %>
+          <%= sui.card(class: "p-4") { sui.muted { "Cell #{i + 1}" } } %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.grid cols: 2, gap: 4, class: "md:grid-cols-4" do %>
+        <% %w[Revenue Users Projects Uptime].each do |label| %>
+          <%= sui.card(class: "p-4") do %>
+            <%= sui.layout.stack gap: 1 do %>
+              <%= sui.muted { label } %>
+              <%= sui.h3 "—" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Container" %>
+    <%= sui.muted do %>
+      Max-width wrapper with horizontal padding and auto margins. Sizes:
+      <%= sui.code ":sm" %> (3xl), <%= sui.code ":md" %> (5xl, default),
+      <%= sui.code ":lg" %> (7xl), <%= sui.code ":xl" %>, <%= sui.code ":full" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.container size: :sm, class: "border rounded-md p-6 bg-muted" do %>
+        <%= sui.muted { "sm container — max-w-3xl, centered." } %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Composing primitives" %>
+    <%= sui.muted do %>
+      A realistic layout: container wrapping a stack, rows inside the stack, a grid inside.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.container size: :md, class: "border rounded-md p-6" do %>
+        <%= sui.layout.stack gap: 6 do %>
+          <%= sui.layout.row justify: :between do %>
+            <%= sui.h2 "Dashboard" %>
+            <%= sui.layout.row gap: 2 do %>
+              <%= sui.button "Export", variant: :outline %>
+              <%= sui.button "New" %>
+            <% end %>
+          <% end %>
+
+          <%= sui.layout.grid cols: 3, gap: 4 do %>
+            <% %w[Revenue Active Orders].each do |label| %>
+              <%= sui.card(class: "p-4") do %>
+                <%= sui.layout.stack gap: 1 do %>
+                  <%= sui.muted { label } %>
+                  <%= sui.h3 "1,234" %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Escape hatches" %>
+    <%= sui.muted do %>
+      Every primitive accepts <%= sui.code "class:" %> for one-offs and forwards
+      remaining kwargs as HTML attrs — pass Stimulus <%= sui.code "data:" %>,
+      <%= sui.code "id:" %>, <%= sui.code "role:" %>, etc. For responsive axis-flipping
+      (e.g. stack on mobile, row on desktop), use <%= sui.code "class:" %> with
+      responsive prefixes rather than adding a direction prop.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.layout.stack gap: 4, class: "md:flex-row md:items-center" do %>
+        <%= sui.h2 "Title" %>
+        <%= sui.muted { "Description" } %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Kwargs Default Notes], rows: [
+      ["<code>stack</code>", "<code>gap:, align:</code>", "—", "Vertical flex, no wrap."],
+      ["<code>row</code>", "<code>gap:, align:, justify:, wrap:</code>", "<code>align: :center, wrap: true</code>", "Horizontal flex, wraps + centers by default."],
+      ["<code>grid</code>", "<code>cols:, gap:</code>", "—", "CSS grid."],
+      ["<code>container</code>", "<code>size:</code>", "<code>:md</code>", "Max-width wrapper, centered, horizontal padding."],
+    ] %>
+  </div>
+</div>

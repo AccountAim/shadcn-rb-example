@@ -1,0 +1,108 @@
+<% content_for :title, "Tabs — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Tabs" %>
+    <%= sui.lead "Organises content into distinct panels, showing one at a time via a tab strip." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "tabs" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Each <%= sui.code "t.tab" %> is one trigger + panel pair — the tab
+      strip is assembled from them, and the pairing is structural, no
+      <%= sui.code "value:" %> ids to match up. The first tab starts active
+      unless one passes <%= sui.code "active: true" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.tabs do |t| %>
+        <%= t.tab "Account" do %>
+          <p class="text-sm text-muted-foreground pt-2">Manage your account details and preferences.</p>
+        <% end %>
+        <%= t.tab "Password" do %>
+          <p class="text-sm text-muted-foreground pt-2">Change your password and security settings.</p>
+        <% end %>
+        <%= t.tab "Notifications" do %>
+          <p class="text-sm text-muted-foreground pt-2">Choose what notifications you receive.</p>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With richer content" %>
+    <%= sui.muted "Tab content can hold any markup — forms, cards, lists, etc." %>
+
+    <%= live_example do %>
+      <%= sui.tabs do |t| %>
+        <%= t.tab "Overview" do %>
+          <div class="pt-2 space-y-1">
+            <p class="text-sm font-medium">Total revenue</p>
+            <p class="text-2xl font-bold">$45,231.89</p>
+            <p class="text-xs text-muted-foreground">+20.1% from last month</p>
+          </div>
+        <% end %>
+        <%= t.tab "Activity" do %>
+          <div class="pt-2 space-y-1">
+            <p class="text-sm font-medium">Recent sign-ins</p>
+            <p class="text-xs text-muted-foreground">Chrome · macOS · 2 minutes ago</p>
+            <p class="text-xs text-muted-foreground">Safari · iOS · 1 hour ago</p>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Detached strip" %>
+    <%= sui.muted do %>
+      <%= sui.code "list: false" %> renders the root and panels without a strip, and
+      <%= sui.code "sui.tabs_strip" %> renders only the strip — anywhere on the page, such as a
+      card header next to the title. The two share the root's <%= sui.code "id" %>; the strip's
+      triggers carry <%= sui.code "data-tabs" %> and the controller keeps their state in sync.
+      <%= sui.code "names" %> repeats the tab labels in order, and <%= sui.code "variant:" %>
+      should match the root's.
+    <% end %>
+
+    <%= live_example do %>
+      <div class="w-full rounded-xl border">
+        <div class="flex items-center justify-between border-b p-4">
+          <h3 class="text-sm font-medium">Revenue by month</h3>
+          <%= sui.tabs_strip tabs: "revenue-tabs", names: %w[Chart Data],
+                class: "h-8 p-0.5", trigger: { class: "px-2 py-0.5 text-xs" } %>
+        </div>
+        <div class="p-4">
+          <%= sui.tabs id: "revenue-tabs", list: false do |t| %>
+            <%= t.tab "Chart" do %>
+              <div class="flex h-24 items-end gap-1">
+                <% [40, 70, 55, 90, 65, 80].each do |h| %>
+                  <div class="flex-1 rounded-t bg-primary/70" style="height: <%= h %>%"></div>
+                <% end %>
+              </div>
+            <% end %>
+            <%= t.tab "Data" do %>
+              <p class="text-sm text-muted-foreground">Jan 40 · Feb 70 · Mar 55 · Apr 90 · May 65 · Jun 80</p>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.tabs</code>", "<code>variant:, orientation:, list:, content:, **opts</code>", "<code>:default</code> / <code>:horizontal</code>", "Root container. Mounts the <code>shadcnrb--tabs--component</code> controller, assembles the tab strip (<code>role=\"tablist\"</code>) and panels from the block's <code>t.tab</code> calls. <code>list:</code> / <code>content:</code> are option hashes for the strip and every panel."],
+      ["<code>t.tab(name)</code>", "<code>active:, **opts, &amp;block</code>", "<code>false</code>", "One trigger + panel pair: <code>name</code> is the tab button, the block is its panel. Inactive panels render <code>hidden</code> and stay in the DOM. <code>**opts</code> land on the tab button."],
+      ["<code>sui.tabs_strip</code>", "<code>tabs:, names:, variant:, trigger:, **opts</code>", "<code>:default</code>", "Strip only, for a <code>list: false</code> root with that <code>id</code>. <code>trigger:</code> applies to every trigger; other options go to the list. A strip for a root that isn't on the page is a no-op."],
+    ] %>
+  </div>
+</div>

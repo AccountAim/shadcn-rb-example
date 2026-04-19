@@ -1,0 +1,284 @@
+<% content_for :title, "Dialog — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Dialog" %>
+    <%= sui.lead "A modal overlay with a backdrop, animated panel, and close button — composes trigger, content, header, footer, title, and description helpers." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "dialog" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      The block is the dialog panel; <%= sui.code "dialog.trigger" %> marks
+      what opens it — you write that element yourself with any helper, the
+      same shape as <%= sui.code "sui.tooltip" %> and
+      <%= sui.code "sui.dropdown_menu" %>. Child helpers
+      (<%= sui.code "dialog.header" %>, ...) live on the proxy.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog do |dialog| %>
+        <%= dialog.trigger { sui.button "Open dialog", variant: :outline } %>
+        <%= dialog.header do %>
+          <%= dialog.title "Welcome" %>
+          <%= dialog.description "This is a basic dialog example." %>
+        <% end %>
+        <p class="text-sm">Dialog body content goes here.</p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Confirmation dialog" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "dialog.footer" %> to place action buttons at the bottom.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog do |dialog| %>
+        <%= dialog.trigger { sui.button "Delete account", variant: :destructive } %>
+        <%= dialog.header do %>
+          <%= dialog.title "Are you sure?" %>
+          <%= dialog.description "This action cannot be undone." %>
+        <% end %>
+        <%= dialog.footer do %>
+          <%= dialog.close "Cancel", variant: :outline %>
+          <%= dialog.close "Yes, delete", variant: :destructive %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Profile edit dialog" %>
+    <%= sui.muted do %>
+      Compose form fields inside the content area using <%= sui.code "sui.label" %> and <%= sui.code "sui.input" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog do |dialog| %>
+        <%= dialog.trigger { sui.button "Edit profile", variant: :outline } %>
+        <%= dialog.header do %>
+          <%= dialog.title "Edit profile" %>
+          <%= dialog.description "Update your display name and email address." %>
+        <% end %>
+        <div class="grid gap-4 py-2">
+          <div class="grid gap-1.5">
+            <%= sui.label "Name", for: "dialog-name" %>
+            <%= sui.input id: "dialog-name", placeholder: "Your name" %>
+          </div>
+          <div class="grid gap-1.5">
+            <%= sui.label "Email", for: "dialog-email" %>
+            <%= sui.input id: "dialog-email", type: "email", placeholder: "you@example.com" %>
+          </div>
+        </div>
+        <%= dialog.footer do %>
+          <%= sui.button "Save changes" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizing" %>
+    <%= sui.muted do %>
+      The panel is <%= sui.code "w-full" %> up to <%= sui.code "sm:max-w-lg" %>,
+      so every dialog is the same width. Size it with classes on
+      <%= sui.code "content:" %> — conflicting utilities replace the defaults.
+      <%= sui.code "sm:w-fit" %> shrinks the panel to its content from
+      <%= sui.code "sm" %> up and leaves phones full width; the
+      <%= sui.code "max-w" %> cap still keeps it inside the viewport.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog content: { class: "sm:w-fit" } do |dialog| %>
+        <%= dialog.trigger { sui.button "Content-sized", variant: :outline } %>
+        <%= dialog.header do %>
+          <%= dialog.title "Sign out?" %>
+          <%= dialog.description "You can sign back in at any time." %>
+        <% end %>
+        <%= dialog.footer do %>
+          <%= dialog.close "Cancel", variant: :outline %>
+          <%= dialog.close "Sign out" %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      Responsive prefixes step the width with the page: a wide layout gets a
+      wide panel, a phone gets the full-width default.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog content: { class: "sm:max-w-md md:max-w-2xl lg:max-w-4xl" } do |dialog| %>
+        <%= dialog.trigger { sui.button "Responsive width", variant: :outline } %>
+        <%= dialog.header do %>
+          <%= dialog.title "Choose a plan" %>
+          <%= dialog.description "Cards stack on a phone and sit side by side from md up." %>
+        <% end %>
+        <div class="grid gap-4 md:grid-cols-3">
+          <% %w[Starter Team Enterprise].each do |plan| %>
+            <%= sui.card(class: "p-4 space-y-1") do %>
+              <p class="font-medium"><%= plan %></p>
+              <p class="text-sm text-muted-foreground">Everything in the tier below, plus more seats.</p>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Lazy-loaded content" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "src:" %> to <%= sui.code "sui.dialog" %> and the
+      panel renders a Turbo Frame that fetches content when opened. The block
+      body becomes the loading state.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog src: lazy_dialog_content_path do |dialog| %>
+        <%= dialog.trigger { sui.button "Lazy-load demo", variant: :outline } %>
+        <div class="grid gap-3 py-4" aria-hidden="true">
+          <%= sui.skeleton class: "h-4 w-40" %>
+          <%= sui.skeleton class: "h-9" %>
+          <%= sui.skeleton class: "h-9" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted do %>
+      The server endpoint wraps its response in a matching
+      <%= sui.code "<turbo-frame>" %> tag.
+      Content loads once on first open, then stays cached for subsequent opens. The lazy-loaded
+      partial reaches dialog parts via <%= sui.code "sui.dialog_proxy" %>.
+      The frame id is a digest of the src URL, so every frame for a given
+      URL requests the same id and responses are safe to cache publicly
+      (browser or CDN). <%= sui.code "reload:" %> re-issues the request on
+      every open through normal HTTP caching — give the endpoint
+      <%= sui.code "no_store" %> when each open must hit the server.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Reload on every open" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "reload: true" %> to re-fetch
+      content every time the dialog opens, instead of caching the first response. The loading
+      state is restored on close so the user sees it again on the next open.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dialog src: lazy_dialog_content_path, reload: true do |dialog| %>
+        <%= dialog.trigger { sui.button "Reload demo", variant: :outline } %>
+        <div class="grid gap-3 py-4" aria-hidden="true">
+          <%= sui.skeleton class: "h-4 w-40" %>
+          <%= sui.skeleton class: "h-9" %>
+          <%= sui.skeleton class: "h-9" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= sui.muted "Open this dialog multiple times. Each open shows \"Loading...\" briefly, then re-requests the content (1s simulated delay; on this publicly cached site, repeat opens within the hour are served from the browser cache)." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Trigger kwarg" %>
+    <%= sui.muted do %>
+      For the common "button opens a dialog" case, skip the wrapper block:
+      pass <%= sui.code "dialog:" %> to <%= sui.code "sui.button" %> with the
+      dialog's options and the button becomes the trigger. The hash takes
+      everything <%= sui.code "sui.dialog" %> takes —
+      <%= sui.code "loading:" %> sets a custom loading state, since there's
+      no block to put it in. The block form stays for inline panel markup.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button "Lazy-load demo", variant: :outline, dialog: { src: lazy_dialog_content_path } %>
+
+      <%= sui.button "Custom loading", variant: :outline,
+            dialog: { src: lazy_dialog_content_path, reload: true,
+                      loading: sui.skeleton(class: "m-6 h-24") } %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Detached trigger" %>
+    <%= sui.muted do %>
+      Pass a String instead — <%= sui.code 'dialog: "an-id"' %> — and the
+      button opens the dialog with that id, wherever both live in the page.
+      Under the hood it's just <%= sui.code 'data-dialog="an-id"' %>, the
+      same way <%= sui.code "data-turbo-frame" %> targets a frame — so any
+      element can be a trigger, and several can share one dialog.
+    <% end %>
+
+    <%= live_example do %>
+      <div class="flex items-center gap-3">
+        <%= sui.button "From a button", variant: :outline, dialog: "detached-profile-dialog" %>
+        <%= link_to "from a plain link", "#", class: "text-sm underline underline-offset-4", data: { dialog: "detached-profile-dialog" } %>
+      </div>
+
+      <%= sui.dialog src: lazy_dialog_content_path, id: "detached-profile-dialog" %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Server-driven confirmation" %>
+    <%= sui.muted do %>
+      Sometimes the server needs to warn the user mid-request. The delete action hits the
+      server, the server detects the operation is risky (e.g., chart has active users), and
+      responds with a Turbo Stream that appends a confirmation dialog to the layout's
+      <%= sui.code "sui.overlay_outlet" %>. The OK button re-submits
+      the same request with <%= sui.code "confirm=true" %>, and this time the server does the work.
+    <% end %>
+    <% outlet_code = <<~RUBY
+      # In app/views/layouts/application.html.erb
+      sui.overlay_outlet
+
+      # In a controller
+      render turbo_stream: turbo_stream.append(
+        Shadcnrb::BaseBuilder::OVERLAY_OUTLET_ID, partial: "charts/destroy_confirmation"
+      )
+    RUBY
+    %>
+    <%= sui.codeblock outlet_code, syntax: :ruby %>
+
+    <%= sui.muted do %>
+      Try both: chart 1 is "risky" (shows confirmation), chart 2 is "safe" (deletes immediately).
+    <% end %>
+
+    <%= live_example do %>
+      <div class="flex gap-2">
+        <%= button_to "Delete chart 1 (risky)", destroy_demo_chart_path(1),
+              method: :delete,
+              form: { data: { turbo_stream: true } },
+              class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap cursor-pointer h-9 px-4 py-2 bg-destructive text-white hover:bg-destructive/90" %>
+        <%= button_to "Delete chart 2 (safe)", destroy_demo_chart_path(2),
+              method: :delete,
+              form: { data: { turbo_stream: true } },
+              class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap cursor-pointer h-9 px-4 py-2 border bg-background shadow-xs hover:bg-accent" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.dialog</code>", "<code>open:, src:, reload:, content:, **opts</code>", "<code>false, nil, false</code>", "Wrapper; the block body is the panel (backdrop + centered card). <code>open: true</code> starts open — a server-rendered confirmation just omits the trigger. <code>src:</code> lazy-loads via Turbo Frame (body = loading state); <code>reload: true</code> re-fetches on every open. <code>content:</code> is the panel's option hash"],
+      ["<code>sui.dialog_proxy</code>", "—", "—", "Returns a bare proxy for lazy-loaded partials rendered inside a Turbo Frame"],
+      ["<code>dialog.trigger</code>", "<code>&amp;block</code>", "—", "Marks which part of the block is the trigger; your markup, verbatim — click-to-open is bound on the wrapper. Mark one element <code>data-slot=\"dialog-trigger\"</code> to scope it in composite triggers"],
+      ["<code>dialog.close</code>", "<code>name, **opts</code>", "—", "Wraps content so clicking it closes the dialog (use in footer)"],
+      ["<code>dialog.header</code>", "<code>**opts</code>", "—", "Flex column container for title and description"],
+      ["<code>dialog.footer</code>", "<code>**opts</code>", "—", "Row container for action buttons, right-aligned on sm+"],
+      ["<code>dialog.title</code>", "<code>name</code>", "<code>nil</code>", "Semibold heading rendered as <code>h2</code>"],
+      ["<code>dialog.description</code>", "<code>name</code>", "<code>nil</code>", "Muted supporting text rendered as <code>p</code>"],
+    ] %>
+  </div>
+</div>

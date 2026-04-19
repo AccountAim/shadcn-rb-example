@@ -1,0 +1,122 @@
+<% content_for :title, "Theme Switcher — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Theme Switcher" %>
+    <%= sui.lead "Pick a color palette and light/dark mode. Persists in localStorage. You'll see it live in the top-right of this page." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "theme_switcher" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Put <%= sui.code "sui.theme_class" %> on <%= sui.code "<html>" %> so the server renders the
+      saved choice, then place the switcher anywhere. The choice lives in the
+      <%= sui.code "shadcnrb_theme" %> and <%= sui.code "shadcnrb_mode" %> cookies.
+    <% end %>
+
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code># In your layout — the saved theme is rendered, nothing flashes
+&lt;html class="&lt;%= sui.theme_class %&gt;"&gt;
+
+# Anywhere in your UI
+&lt;%= sui.theme_switcher %&gt;</code></pre>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Try it" %>
+    <%= sui.muted "The switcher in the header above is live. Change the theme, reload the page — your choice persists. Dark mode toggles independently." %>
+
+    <%= live_example do %>
+      <%= sui.theme_switcher %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "How it works" %>
+    <%= sui.p do %>
+      Each theme is a CSS class like <%= sui.code ".sui-theme-blue" %> that overrides
+      <%= sui.code "--color-primary" %> / <%= sui.code "--color-primary-foreground" %> /
+      <%= sui.code "--color-ring" %> on <%= sui.code "<html>" %>. Dark mode is the same
+      mechanism, just a <%= sui.code ".dark" %> class. The two combine:
+      <%= sui.code "<html class=\"sui-theme-blue dark\">" %> gives you blue-accented dark.
+      Because every component uses semantic tokens (no inline <%= sui.code "bg-blue-500" %>),
+      components pick up the new values automatically.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Shipped themes" %>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li><%= sui.code "default" %> — neutral zinc (the base palette)</li>
+      <li><%= sui.code "blue" %></li>
+      <li><%= sui.code "green" %></li>
+      <li><%= sui.code "rose" %></li>
+      <li><%= sui.code "violet" %></li>
+      <li><%= sui.code "orange" %></li>
+    </ul>
+    <%= sui.muted do %>
+      All six ship in <%= sui.code "app/assets/tailwind/shadcnrb_themes.css" %>, which
+      <%= sui.code "application.css" %> pulls in via <%= sui.code '@import "./shadcnrb_themes.css"' %>.
+      Don't want presets? Delete the import line and ship only the neutral palette.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Adding your own theme" %>
+
+    <ol class="list-decimal list-inside space-y-1 text-sm">
+      <li>Open <%= sui.code "app/assets/tailwind/shadcnrb_themes.css" %>.</li>
+      <li>Add a <%= sui.code ".sui-theme-<name>" %> rule and a <%= sui.code ".dark.sui-theme-<name>" %> pair.</li>
+      <li>Pass the name to the switcher via <%= sui.code "themes:" %> — or skip that and use the class directly.</li>
+    </ol>
+
+    <%= sui.codeblock <<~CSS, syntax: :css %>
+      /* app/assets/tailwind/shadcnrb_themes.css */
+      .sui-theme-brand {
+        --color-primary: oklch(0.6 0.2 320);
+        --color-primary-foreground: oklch(0.985 0 0);
+        --color-ring: oklch(0.6 0.2 320);
+      }
+      .dark.sui-theme-brand {
+        --color-primary: oklch(0.75 0.18 320);
+        --color-primary-foreground: oklch(0.145 0 0);
+        --color-ring: oklch(0.75 0.18 320);
+      }
+    CSS
+
+    <% snippet = "<" + "%= sui.theme_switcher themes: %w[default blue green brand] %" + ">" %>
+    <%= sui.codeblock snippet, syntax: :erb %>
+
+    <%= sui.muted do %>
+      Themes only override <%= sui.code "--color-primary" %>,
+      <%= sui.code "--color-primary-foreground" %>, and <%= sui.code "--color-ring" %>.
+      Keep it to those three so backgrounds/borders stay neutral and theme swaps
+      don't touch surface colors. If you want broader recolors, edit the base
+      <%= sui.code "application.css" %> tokens instead.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Persisting on the server" %>
+    <%= sui.muted do %>
+      The cookie is the default store. To keep the choice with the user's
+      account, pass the stored value to the helper and listen for the
+      <%= sui.code "change" %> event — see
+      <%= link_to "State persistence", docs_persistence_path, class: "underline underline-offset-4 font-medium" %>.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Args Description], rows: [
+      ["<code>theme_switcher</code>", "<code>themes:, **opts</code>", "Dropdown with theme swatches + light/dark toggle"],
+      ["<code>theme_class</code>", "<code>theme:, mode:</code>", "Classes for <code>&lt;html&gt;</code> from the theme and mode cookies (<code>sui-theme-blue dark</code>). Arguments win over the cookies; nil falls through."],
+    ] %>
+  </div>
+</div>

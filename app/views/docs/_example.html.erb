@@ -1,0 +1,12 @@
+<div class="space-y-3">
+  <% if frame %>
+    <%= sui.card(class: "p-6") do %>
+      <div class="flex flex-wrap items-center gap-3">
+        <%= capture(&block) %>
+      </div>
+    <% end %>
+  <% else %>
+    <%= capture(&block) %>
+  <% end %>
+  <%= sui.codeblock code, syntax: syntax %>
+</div>

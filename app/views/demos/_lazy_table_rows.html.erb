@@ -1,0 +1,19 @@
+<!-- A turbo-frame can't sit inside a table, so the frame stays beside it and the
+     stream it carries swaps the placeholder tbody for the rows. -->
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+  <turbo-stream action="replace" target="lazy-invoices">
+    <template>
+      <% t = sui.table_proxy %>
+      <%= t.body id: "lazy-invoices" do %>
+        <% 1.upto(20) do |i| %>
+          <%= t.row do %>
+            <%= t.cell "INV#{i.to_s.rjust(3, '0')}", class: "font-medium" %>
+            <%= t.cell i.odd? ? "Paid" : "Pending" %>
+            <%= t.cell i % 3 == 0 ? "Bank Transfer" : "Credit Card" %>
+            <%= t.cell "$#{i * 50}.00", class: "text-right" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </template>
+  </turbo-stream>
+</turbo-frame>
