@@ -1,0 +1,22 @@
+<%# Rows for the orders table: the page renders the first page inside the
+    table, later pages arrive as a stream appended to its body. %>
+<% g ||= sui.data_grid_proxy %>
+<% orders.each do |order| %>
+  <%= g.row do %>
+    <%= g.cell order[:order] %>
+    <%= g.cell order[:customer] %>
+    <%= g.cell order[:notes] %>
+    <%= g.cell order[:ship_to] %>
+    <%= g.cell { sui.badge order[:status], variant: demo_badge_variant(order[:status]) } %>
+    <%= g.cell order[:items] %>
+    <%= g.cell order[:total] %>
+    <%= g.cell order[:placed] %>
+    <%= g.cell selectable: false do %>
+      <div class="flex justify-end gap-1">
+        <%= sui.button variant: :ghost, size: :"icon-sm", icon: :pencil, "aria-label": "Edit #{order[:order]}" %>
+        <%= sui.button variant: :ghost, size: :"icon-sm", icon: :"trash-2", "aria-label": "Delete #{order[:order]}" %>
+        <%= sui.button variant: :ghost, size: :"icon-sm", icon: :ellipsis, "aria-label": "More for #{order[:order]}" %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

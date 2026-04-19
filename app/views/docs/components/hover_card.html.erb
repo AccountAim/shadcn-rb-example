@@ -1,0 +1,191 @@
+<% content_for :title, "Hover Card — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Hover Card" %>
+    <%= sui.lead "A rich preview of what's behind a link, shown on hover or keyboard focus. Same top-layer mechanics as tooltip, with a popover-styled panel and longer delays." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "hover_card" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Example" %>
+    <%= sui.muted do %>
+      The block is the panel; <%= sui.code "h.trigger" %> marks what it's
+      attached to — the same shape as
+      <%= link_to "tooltip", docs_component_path("tooltip"), class: "underline underline-offset-4" %>.
+      You write the trigger yourself, so a real <%= sui.code "sui.link_to" %>
+      keeps its path, Turbo and CSRF (upstream's trigger is an
+      <%= sui.code "<a>" %> too). Opens after 600ms, closes 300ms after the
+      pointer leaves, which is enough grace to move onto the panel and click
+      something in it.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card content: { class: "w-80" } do |h| %>
+        <%= h.trigger { sui.link_to "@shadcn", "https://github.com/shadcn" } %>
+        <div class="flex gap-4">
+          <%= sui.avatar do |a| %>
+            <%= a.fallback "SC" %>
+          <% end %>
+          <div class="space-y-1">
+            <p class="text-sm font-semibold">@shadcn</p>
+            <p class="text-sm">The React Framework – created and maintained by @vercel.</p>
+            <p class="text-xs text-muted-foreground">Joined December 2021</p>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Attaching to any helper" %>
+    <%= sui.muted do %>
+      Anything can be the trigger — hover is bound on the wrapper, so the
+      element itself is left untouched.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card align: :start do |h| %>
+        <%= h.trigger { sui.badge "Pro", variant: :secondary } %>
+        <p class="text-sm font-medium">Pro plan</p>
+        <p class="text-sm text-muted-foreground">Unlimited projects, 10 seats, priority support.</p>
+      <% end %>
+
+      <%= sui.hover_card side: :right do |h| %>
+        <%= h.trigger do %>
+          <%= sui.avatar do |a| %>
+            <%= a.fallback "GT" %>
+          <% end %>
+        <% end %>
+        <p class="text-sm font-medium">Gogs T.</p>
+        <p class="text-sm text-muted-foreground">Last seen 4 minutes ago.</p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sides and alignment" %>
+    <%= sui.muted do %>
+      <%= sui.code "side:" %> defaults to <%= sui.code ":bottom" %>,
+      <%= sui.code "align:" %> to <%= sui.code ":center" %>. No collision
+      detection — the panel stays where you put it.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card side: :top do |h| %>
+        <%= h.trigger { sui.button "Above", variant: :outline } %>
+        <p class="text-sm">Anchored to the top of the trigger.</p>
+      <% end %>
+
+      <%= sui.hover_card side: :right, align: :start do |h| %>
+        <%= h.trigger { sui.button "Right, start", variant: :outline } %>
+        <p class="text-sm">Anchored right, top edges flush.</p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Delays" %>
+    <%= sui.muted do %>
+      Upstream hangs <%= sui.code "delay" %> / <%= sui.code "closeDelay" %> off
+      the trigger; here they live on the wrapper so one call configures the pair.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card delay: 0, close_delay: 600 do |h| %>
+        <%= h.trigger { sui.button "Instant", variant: :outline } %>
+        <p class="text-sm">Opens immediately, lingers for 600ms.</p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Lazy-loaded content" %>
+    <%= sui.muted do %>
+      Pass <%= sui.code "src:" %> and the panel renders a Turbo Frame that
+      fetches when the card first opens — the GitHub-style profile preview.
+      The block body is the loading state (blank gets a default
+      "Loading..." placeholder). Content is fetched once and reused on
+      later opens, and the panel re-positions itself when the loaded
+      content changes the panel's size. The endpoint wraps its response in
+      a <%= sui.code "<turbo-frame>" %> tag matching the request's
+      <%= sui.code "Turbo-Frame" %> header.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card src: lazy_hover_card_content_path, delay: 100, content: { class: "w-72" } do |h| %>
+        <%= h.trigger { sui.link_to "@gogo", "#", variant: :link } %>
+        <div class="flex gap-3" aria-hidden="true">
+          <%= sui.skeleton class: "size-10 shrink-0 rounded-full" %>
+          <div class="flex-1 space-y-2 py-1">
+            <%= sui.skeleton class: "h-3 w-24" %>
+            <%= sui.skeleton class: "h-3" %>
+            <%= sui.skeleton class: "h-3 w-2/3" %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Trigger kwarg" %>
+    <%= sui.muted do %>
+      For a one-off "element with a preview card", skip the wrapper block:
+      pass <%= sui.code "hover_card:" %> to <%= sui.code "sui.button" %> (or
+      <%= sui.code "sui.link_to" %>) with the card's options —
+      <%= sui.code "loading:" %> sets the loading state, since there's no
+      block to put it in.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button "Hover for profile", variant: :outline,
+            hover_card: { src: lazy_hover_card_content_path, delay: 100,
+                          loading: sui.skeleton(class: "h-16"),
+                          content: { class: "w-72" } } %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Reload on every open" %>
+    <%= sui.muted do %>
+      <%= sui.code "reload: true" %> re-fetches instead of caching the first
+      response, and the loading state is restored on close — same options as
+      <%= sui.code "sui.dialog" %>.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.hover_card src: lazy_hover_card_content_path, reload: true, delay: 100, content: { class: "w-72" } do |h| %>
+        <%= h.trigger { sui.button "Fresh every open", variant: :outline } %>
+        <%= sui.skeleton class: "h-16" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.hover_card</code>", "<code>side:, align:, delay:, close_delay:, src:, reload:, panel:, enabled:, content:, **opts</code>", "<code>:bottom</code> / <code>:center</code> / <code>600</code> / <code>300</code> / <code>nil</code> / <code>false</code>", "Wrapper; the block body is the panel — a <code>w-64</code> popover surface. Mounts the shared <code>shadcnrb--anchored--component</code> controller and owns the hover/focus wiring. <code>**opts</code> land on the wrapper, <code>content:</code> on the panel. With <code>src:</code> the body becomes the loading state for a lazily fetched Turbo Frame; <code>reload: true</code> re-fetches on every open. <code>panel:</code> adopts an element by id as the panel while <code>enabled:</code> holds (flip <code>data-shadcnrb--anchored--component-enabled-value</code> at runtime); the sidebar's icon-rail flyout is built on it."],
+      ["<code>h.trigger</code>", "<code>&amp;block</code>", "—", "Marks which part of the block is the trigger; everything else is the panel. Your markup, verbatim — the component renders no link or button of its own, which is why it has no dependencies. Hoisted to the top of the wrapper, so its position in the block doesn't matter."],
+    ] %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Divergences" %>
+    <%= sui.muted do %>
+      Delays live on the wrapper rather than the trigger, and there's no
+      <%= sui.code "HoverCardContent" %> part — the block body is the panel.
+      Positioning is <%= sui.code "@floating-ui/dom" %>, vendored via
+      importmap (no npm), and the panel is a native
+      <%= sui.code 'popover="manual"' %> element in the top layer (nothing
+      can clip it) instead of a portal.
+      <%= sui.code "sideOffset" %> / <%= sui.code "alignOffset" %> are baked
+      in at 4px.
+    <% end %>
+  </div>
+</div>

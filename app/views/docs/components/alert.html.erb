@@ -1,0 +1,74 @@
+<% content_for :title, "Alert — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Alert" %>
+    <%= sui.lead "Displays a short, important message that attracts the user's attention." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "alert" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "sui.alert" %> with <%= sui.code "alert_title" %> and <%= sui.code "alert_description" %> inside a block.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.alert do %>
+        <%= sui.alert_title "Heads up!" %>
+        <%= sui.alert_description "This is an informational alert message." %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Variants" %>
+    <%= sui.muted do %>
+      Use <%= sui.code "variant: :destructive" %> to communicate an error or dangerous state.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.alert variant: :destructive do %>
+        <%= sui.alert_title "Something went wrong" %>
+        <%= sui.alert_description "Your session has expired. Please sign in again." %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With icon" %>
+    <%= sui.muted do %>
+      Place <%= sui.code "sui.icon" %> before the title — the grid layout aligns it automatically.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- variant: :default -->
+      <%= sui.alert do %>
+        <%= sui.icon :"circle-alert" %>
+        <%= sui.alert_title "Heads up!" %>
+        <%= sui.alert_description "You can add components to your app using the CLI." %>
+      <% end %>
+      <!-- variant: :destructive -->
+      <%= sui.alert variant: :destructive do %>
+        <%= sui.icon :"circle-x" %>
+        <%= sui.alert_title "Error" %>
+        <%= sui.alert_description "Your payment method could not be processed." %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>alert(name)</code>", "<code>variant:</code>", "<code>:default</code>", "Container element. <code>variant:</code> is one of <code>:default</code> <code>:destructive</code>."],
+      ["<code>alert_title(name)</code>", "—", "—", "Bold, single-line heading for the alert. Accepts a string or block."],
+      ["<code>alert_description(name)</code>", "—", "—", "Supporting text displayed below the title. Accepts a string or block."],
+    ] %>
+  </div>
+</div>

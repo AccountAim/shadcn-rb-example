@@ -1,0 +1,4 @@
+<%# Last child of the body: a lazy frame that fetches the next page once it
+    scrolls into view. The stream replaces it with the page's rows and, if
+    there is more, a fresh loader. %>
+<%= turbo_frame_tag "orders-loader", src: more_orders_path(page: page, format: :turbo_stream), loading: :lazy, class: "block p-4 text-center text-sm text-muted-foreground animate-pulse" do %>Loading…<% end %>

@@ -1,0 +1,108 @@
+<% content_for :title, "shadcnrb — shadcn/ui for Rails" %>
+
+<%= sui.layout.container size: :lg, class: "py-16 md:py-24" do %>
+  <%= sui.layout.stack gap: 6, align: :center, class: "text-center max-w-3xl mx-auto" do %>
+    <%= render "shared/logo_mark", class: "h-16 w-16 text-primary" %>
+    <%= sui.badge "v0.2 · early access", variant: :secondary %>
+    <%= sui.h1 "shadcn/ui for Rails", class: "text-5xl md:text-6xl tracking-tight" %>
+    <%= sui.lead "Accessible, unstyled-by-default components you own. Ejected straight into your Rails app — no runtime gem, no npm, no lock-in. Powered by Tailwind v4.", class: "max-w-2xl" %>
+    <%= sui.layout.row gap: 3, justify: :center do %>
+      <%= sui.link_to "Get started", docs_installation_path, variant: :default, size: :lg %>
+      <%= sui.link_to "Browse components", docs_path, variant: :outline, size: :lg %>
+    <% end %>
+
+    <p class="text-xs text-muted-foreground pt-2">
+      Inspired by
+      <%= link_to "shadcn/ui", "https://ui.shadcn.com", class: "underline underline-offset-4 hover:text-foreground", target: "_blank", rel: "noopener" %>
+      and
+      <%= link_to "ruby_ui", "https://rubyui.com", class: "underline underline-offset-4 hover:text-foreground", target: "_blank", rel: "noopener" %>.
+    </p>
+  <% end %>
+<% end %>
+
+<%= sui.separator %>
+
+<%= sui.layout.container size: :xl, class: "py-16" do %>
+  <%= sui.layout.stack gap: 10 do %>
+    <%= sui.layout.stack gap: 2, align: :center, class: "text-center" do %>
+      <%= sui.h2 "Component preview" %>
+      <%= sui.muted { "A few of the 30+ components you get after one install command." } %>
+    <% end %>
+
+    <%= sui.layout.grid cols: 1, gap: 6, class: "md:grid-cols-2 lg:grid-cols-3" do %>
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Buttons", class: "!text-base !font-semibold" %>
+          <%= sui.layout.row gap: 2 do %>
+            <%= sui.button "Default" %>
+            <%= sui.button "Outline", variant: :outline %>
+            <%= sui.button "Ghost", variant: :ghost %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("button"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Badges", class: "!text-base !font-semibold" %>
+          <%= sui.layout.row gap: 2 do %>
+            <%= sui.badge "Default" %>
+            <%= sui.badge "Success", variant: :secondary %>
+            <%= sui.badge "Error", variant: :destructive %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("badge"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Alerts", class: "!text-base !font-semibold" %>
+          <%= sui.alert do %>
+            <%= sui.alert_title "Heads up" %>
+            <%= sui.alert_description "Your session will expire in 5 minutes." %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("alert"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Dialog", class: "!text-base !font-semibold" %>
+          <%= sui.dialog do |dialog| %>
+            <%= dialog.trigger { sui.button "Open dialog", variant: :outline } %>
+            <%= dialog.header do %>
+              <%= dialog.title "shadcnrb works" %>
+              <%= dialog.description "Everything lives in your own app/components/shadcnrb/." %>
+            <% end %>
+            <%= dialog.footer { dialog.close "Got it" } %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("dialog"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Form field", class: "!text-base !font-semibold" %>
+          <%= sui.form_field label: "Email", hint: "We won't share this." do %>
+            <%= sui.input placeholder: "you@example.com" %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("form_builder"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+
+      <%= sui.card(class: "p-6") do %>
+        <%= sui.layout.stack gap: 4 do %>
+          <%= sui.h3 "Toast", class: "!text-base !font-semibold" %>
+          <%= sui.toast_trigger title: "Saved", description: "Your changes are safe." do %>
+            <%= sui.button "Show toast", variant: :outline %>
+          <% end %>
+          <%= link_to "View docs →", docs_component_path("toast"), class: "text-sm text-muted-foreground hover:text-foreground" %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= sui.layout.row justify: :center do %>
+      <%= sui.link_to "See all 30+ components →", docs_path, variant: :ghost %>
+    <% end %>
+  <% end %>
+<% end %>

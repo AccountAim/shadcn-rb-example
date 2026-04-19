@@ -1,0 +1,214 @@
+<% content_for :title, "Sidebar — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Sidebar" %>
+    <%= sui.lead "A composable, collapsible navigation panel wired to a Stimulus controller. Build app shells with a persistent left (or right) drawer that collapses off-canvas." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "sidebar" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Note" %>
+    <%= sui.muted do %>
+      Because this docs page is itself rendered inside a sidebar layout, embedding a full
+      <%= sui.code "sidebar_wrapper" %> in the preview
+      would create a nested layout conflict. Instead, the individual building blocks are shown
+      below. For a full working demo, see the
+      <%= link_to "sidebar playground", docs_sidebar_playground_path, class: "underline underline-offset-4 font-medium" %>.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage — individual pieces" %>
+    <%= sui.muted do %>
+      Child parts are reached via the proxy yielded by
+      <%= sui.code "sui.sidebar_wrapper do |s|" %>. For
+      isolated demos outside a wrapper, <%= sui.code "sui.sidebar_proxy" %>
+      returns the same proxy without rendering the shell.
+      <%= sui.code "menu_button" %> mirrors Rails
+      <%= sui.code "link_to" %> — pass a name + path and the active state is
+      auto-detected via <%= sui.code "current_page?" %>.
+    <% end %>
+
+    <% s = sui.sidebar_proxy %>
+
+    <%= live_example do %>
+      <!-- default -->
+      <%= s.menu_button "Dashboard", "#" %>
+      <!-- active: true -->
+      <%= s.menu_button "Active item", "#", active: true %>
+      <!-- icon: :home -->
+      <%= s.menu_button "Home", "#", icon: :home %>
+    <% end %>
+
+    <%= sui.muted do %>
+      For anything beyond a plain link — <%= sui.code "button_to" %> with
+      <%= sui.code "method: :delete" %>, Turbo options, nested icons — pass a
+      block. The wrapper renders a styled <%= sui.code "<div role=\"button\">" %>
+      and your Rails helper fills the row.
+    <% end %>
+
+    <%= live_example do %>
+      <!-- menu_button (block form with button_to) -->
+      <div class="w-64 bg-sidebar rounded-md p-2">
+        <%= s.menu_button do %>
+          <%= button_to "Sign out", "#", method: :delete %>
+        <% end %>
+      </div>
+      <!-- group_label -->
+      <div class="w-48 bg-sidebar rounded-md">
+        <%= s.group_label "Platform" %>
+      </div>
+      <!-- separator -->
+      <div class="w-48 bg-sidebar rounded-md py-2">
+        <%= s.separator %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sub-menu flyout" %>
+    <%= sui.muted do %>
+      A collapsible group loses its <%= sui.code "menu_sub" %> when the rail
+      collapses to icons. <%= sui.code "s.collapsible flyout: true" %> keeps
+      the nested pages reachable: on the icon rail, hovering (or focusing)
+      the menu button opens the same list as a panel to its right, headed by
+      the button's label. Expanded, the group behaves as before. The click is
+      inert while the flyout is on, so the inline open state survives a
+      collapse and expand. Try it collapsed in the
+      <%= link_to "playground", docs_sidebar_playground_path, class: "underline underline-offset-4 font-medium" %>
+      or the
+      <%= link_to "Nav + Sidebar block", block_path("nav_and_sidebar"), class: "underline underline-offset-4 font-medium" %>.
+    <% end %>
+
+    <% code = <<~RUBY
+      s.collapsible open: true, flyout: true do |c|
+        s.menu_item do
+          s.menu_button "Docs", collapsible: true, icon: :folder do
+            c.chevron
+          end
+        end
+
+        c.content do
+          s.menu_sub do
+            s.menu_sub_item { s.menu_sub_button "Introduction", "#" }
+            s.menu_sub_item { s.menu_sub_button "Installation", "#" }
+          end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Full structure (code only)" %>
+    <%= sui.muted do %>
+      Assemble these methods to build a complete sidebar shell. The
+      <%= sui.code "sidebar_wrapper" %> owns the
+      Stimulus controller; <%= sui.code "s.trigger" %>
+      and <%= sui.code "s.rail" %> both dispatch
+      the toggle action.
+    <% end %>
+    <% full_code = <<~RUBY
+      sui.sidebar_wrapper do |s|
+        s.sidebar do
+          s.header do
+            tag.span "My App", class: "font-semibold text-sm px-2"
+          end
+          s.content do
+            s.group do
+              s.group_label "Platform"
+              s.group_content do
+                s.menu do
+                  s.menu_item do
+                    s.menu_button "Dashboard", root_path
+                  end
+                  s.menu_item do
+                    s.menu_button "Settings", settings_path
+                  end
+                end
+              end
+            end
+            s.separator
+            s.group do
+              s.group_label "Account"
+              s.group_content do
+                s.menu do
+                  s.menu_item do
+                    s.menu_button "Profile", profile_path
+                  end
+                end
+              end
+            end
+          end
+          s.footer do
+            tag.span "Footer content"
+          end
+          s.rail
+        end
+        s.inset do
+          tag.header(class: "flex items-center gap-2 p-4") do
+            s.trigger
+          end
+          tag.div(class: "p-4") do
+            tag.p "Main content area"
+          end
+        end
+      end
+    RUBY
+    %>
+    <div class="rounded-md border bg-muted/40 p-4">
+      <pre class="text-xs overflow-x-auto"><code><%= full_code.strip %></code></pre>
+    </div>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Persisting on the server" %>
+    <%= sui.muted do %>
+      The cookie is the default store. To keep the choice with the user's
+      account, pass the stored value to the helper and listen for the
+      <%= sui.code "change" %> event — see
+      <%= link_to "State persistence", docs_persistence_path, class: "underline underline-offset-4 font-medium" %>.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[method signature description], rows: [
+      ["<code>sui.sidebar_wrapper</code>", "<code>(state:, bounded:, **opts, &block)</code>", "Outermost div. Mounts the Stimulus sidebar controller and sets CSS custom properties for width. Renders <code>state:</code> (<code>:expanded</code> / <code>:collapsed</code>), else the <code>sidebar_state</code> cookie, so a collapsed sidebar never flashes expanded. Each desktop toggle dispatches <code>shadcnrb--sidebar--component:change</code> with <code>{ state }</code>. Yields a proxy <code>s</code>."],
+      ["<code>sui.sidebar_proxy</code>", "—", "Returns a bare proxy for rendering individual pieces outside a wrapper (e.g. docs previews)."],
+      ["<code>s.sidebar</code>", "<code>(side:, variant:, collapsible:, **opts, &block)</code>", "The sidebar panel itself. <code>side:</code> is <code>:left</code> (default) or <code>:right</code>."],
+      ["<code>s.header</code>", "<code>(**opts, &block)</code>", "Flex column at the top of the sidebar, typically for a logo or app name."],
+      ["<code>s.content</code>", "<code>(**opts, &block)</code>", "Scrollable flex column that fills the remaining vertical space."],
+      ["<code>s.group</code>", "<code>(**opts, &block)</code>", "A labelled section inside sidebar content, padded on all sides."],
+      ["<code>s.group_label</code>", "<code>(name = nil, **opts, &block)</code>", "Small muted heading above a group of links."],
+      ["<code>s.group_content</code>", "<code>(**opts, &block)</code>", "Wrapper div for the group's menu list."],
+      ["<code>s.menu</code>", "<code>(**opts, &block)</code>", "Unordered list (<code>ul</code>) that holds menu items with gap spacing."],
+      ["<code>s.menu_item</code>", "<code>(**opts, &block)</code>", "List item (<code>li</code>) wrapper for a single menu button."],
+      ["<code>s.menu_button</code>", "<code>(name, options, active: nil, size: :default, icon: nil, **html_opts, &block)</code>", "An anchor styled as a sidebar row. Mirrors <code>link_to</code>. Auto-sets active via <code>current_page?</code>; pass <code>active: true/false</code> to override. <code>size:</code> is <code>:sm</code>, <code>:default</code>, <code>:md</code>, or <code>:lg</code>."],
+      ["<code>s.collapsible</code>", "<code>(open:, flyout: false, content:, **opts, &block)</code>", "<code>sui.collapsible</code> for a sub-menu. With <code>flyout: true</code> the content also opens on hover as a panel to the right of its <code>menu_button</code> while the rail is collapsed to icons — the same <code>menu_sub</code>, written once, headed by the button's label. On the rail the click is inert and the inline open state is kept."],
+      ["<code>s.separator</code>", "<code>(**opts)</code>", "Horizontal rule styled with sidebar border colour, with side margins."],
+      ["<code>s.footer</code>", "<code>(**opts, &block)</code>", "Flex column pinned to the bottom of the sidebar."],
+      ["<code>s.inset</code>", "<code>(**opts, &block)</code>", "The main content area (<code>main</code>) that sits beside the sidebar, grows to fill remaining space."],
+      ["<code>s.trigger</code>", "<code>(**opts)</code>", "Icon button that dispatches <code>shadcnrb--sidebar--component#toggle</code> on click to expand/collapse the sidebar."],
+      ["<code>s.rail</code>", "<code>(**opts)</code>", "Narrow invisible hit-area along the sidebar edge — also toggles on click, visible as a faint line on hover."],
+    ] %>
+  </div>
+</div>

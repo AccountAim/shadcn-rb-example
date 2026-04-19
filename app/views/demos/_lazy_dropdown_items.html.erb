@@ -1,0 +1,9 @@
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+  <% m = sui.dropdown_menu_proxy %>
+  <%= m.label "Chart 42" %>
+  <%= m.separator %>
+  <%= m.item "Duplicate",  "#" %>
+  <%= m.item "Export CSV", "#" %>
+  <%= m.separator %>
+  <%= m.item "Delete", "#" %>
+</turbo-frame>

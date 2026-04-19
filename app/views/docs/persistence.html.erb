@@ -1,0 +1,99 @@
+<% content_for :title, "State persistence — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "State persistence" %>
+    <%= sui.lead do %>
+      Two components remember a choice across requests: the theme switcher
+      (theme and light/dark mode) and the sidebar (expanded or collapsed).
+      Both persist in a cookie by default and render server-side, so nothing
+      flashes on load. Both can persist on your backend instead, with the
+      cookie as the fallback.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "How it works" %>
+    <ul class="list-disc list-inside space-y-1 text-sm leading-relaxed">
+      <li><strong>Read side</strong> — a helper renders the state into the HTML. It takes the value as an argument and falls back to the cookie when the argument is <%= sui.code "nil" %>. Precedence: argument, then cookie, then default.</li>
+      <li><strong>Write side</strong> — the component always writes its cookie, then dispatches a Stimulus <%= sui.code "change" %> event with the new value. The gem never issues a request; your app listens if it wants to store the value.</li>
+      <li><strong>Failure</strong> — if your request fails, the cookie keeps the page correct until the next server render, where your stored value wins.</li>
+    </ul>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Theme and mode" %>
+    <%= sui.p "Cookie (default). Put the helper on <html>; the switcher writes the shadcnrb_theme and shadcnrb_mode cookies:", class: "text-sm" %>
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;html class="&lt;%= sui.theme_class %&gt;"&gt;
+  …
+  &lt;%= sui.theme_switcher %&gt;</code></pre>
+
+    <%= sui.p "Backend. Pass the stored values; the event detail is always { theme, mode }, whichever one changed:", class: "text-sm" %>
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;html class="&lt;%= sui.theme_class(theme: current_user.theme, mode: current_user.mode) %&gt;"&gt;
+
+shadcnrb--theme-switcher--component:change   detail: { theme: "blue", mode: "dark" }</code></pre>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sidebar" %>
+    <%= sui.p "Cookie (default). The wrapper reads the sidebar_state cookie, which a desktop toggle writes:", class: "text-sm" %>
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;%= sui.sidebar_wrapper do |s| %&gt;</code></pre>
+
+    <%= sui.p "Backend. Pass the stored state (:expanded or :collapsed); only a desktop toggle dispatches, never the mobile drawer or a resize:", class: "text-sm" %>
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;%= sui.sidebar_wrapper state: current_user.sidebar_state do |s| %&gt;
+
+shadcnrb--sidebar--component:change   detail: { state: "collapsed" }</code></pre>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "The backend hook" %>
+    <%= sui.p "One Stimulus controller on any ancestor catches both events, here the layout's body. This site runs exactly this, with the session as its store:", class: "text-sm" %>
+<pre class="rounded-md bg-muted px-4 py-3 overflow-x-auto text-xs font-mono"><code>&lt;body data-controller="preferences"
+      data-preferences-url-value="&lt;%= preferences_path %&gt;"
+      data-action="shadcnrb--theme-switcher--component:change-&gt;preferences#save
+                   shadcnrb--sidebar--component:change-&gt;preferences#save"&gt;</code></pre>
+
+    <% js = <<~JS
+      // app/javascript/controllers/preferences_controller.js
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static values = { url: String }
+
+        save({ detail }) {
+          fetch(this.urlValue, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(detail)
+          })
+        }
+      }
+    JS
+    %>
+    <%= sui.codeblock js, syntax: :javascript %>
+
+    <% rb = <<~RUBY
+      # config/routes.rb
+      patch "preferences" => "preferences#update"
+
+      # app/controllers/preferences_controller.rb
+      class PreferencesController < ApplicationController
+        def update
+          current_user.update!(params.permit(:theme, :mode).merge(sidebar_state: params[:state]).compact)
+          head :no_content
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock rb %>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+  <div class="flex gap-3">
+    <%= sui.avatar do |a| %>
+      <%= a.fallback "GG" %>
+    <% end %>
+    <div class="space-y-1">
+      <p class="text-sm font-semibold">@gogo</p>
+      <p class="text-sm text-muted-foreground">
+        Building shadcnrb — shadcn/ui for Rails. This card was fetched
+        lazily after it first opened.
+      </p>
+      <p class="text-xs text-muted-foreground">Joined August 2026</p>
+    </div>
+  </div>
+</turbo-frame>

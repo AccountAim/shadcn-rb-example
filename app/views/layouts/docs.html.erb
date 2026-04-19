@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="<%= sui.theme_class(theme: preferences["theme"], mode: preferences["mode"]) %>">
+  <head>
+    <title><%= content_for(:title).presence || "shadcnrb docs" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: "Inter", system-ui, sans-serif; }
+      pre, code { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    </style>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <%= sui.codeblock_theme_styles %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="bg-background text-foreground antialiased"
+      data-controller="preferences docs-width" data-docs-width-cookie-value="docs_width" data-docs-width-full-value="<%= docs_full_width? %>" data-docs-width-fixed-class="max-w-4xl mx-auto" data-preferences-url-value="<%= preferences_path %>" data-action="shadcnrb--theme-switcher--component:change->preferences#save shadcnrb--sidebar--component:change->preferences#save">
+    <%= sui.overlay_outlet %>
+    <%= sui.toaster position: "bottom-right" %>
+    <%= sui.sidebar_wrapper state: preferences["state"] do |s| %>
+      <%= s.sidebar(variant: :inset) do %>
+        <%= s.header do %>
+          <%= link_to root_path, class: "flex items-center gap-2 px-2 no-underline" do %>
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">S</div>
+            <div>
+              <p class="text-sm font-semibold text-foreground">shadcnrb</p>
+              <p class="text-xs text-muted-foreground">docs</p>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%= s.content do %>
+          <%= s.group do %>
+            <%= s.group_label "Getting Started" %>
+            <%= s.group_content do %>
+              <%= s.menu do %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Introduction", docs_path %>
+                <% end %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Installation", docs_installation_path %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= s.separator %>
+
+          <%= s.group do %>
+            <%= s.group_label "Concepts" %>
+            <%= s.group_content do %>
+              <%= s.menu do %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Themes & dark mode", docs_themes_path %>
+                <% end %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "State persistence", docs_persistence_path %>
+                <% end %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Styles", docs_styles_path %>
+                <% end %>
+                <%= s.menu_item do %>
+                  <%= s.menu_button "Overriding a component", docs_overriding_path %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= s.separator %>
+
+          <%= s.group do %>
+            <%= s.group_label "Components" %>
+            <%= s.group_content do %>
+              <%= s.menu do %>
+                <% docs_components.each do |name| %>
+                  <%= s.menu_item do %>
+                    <%= s.menu_button name.titleize, docs_component_path(name) %>
+                    <% if name == "sidebar" %>
+                      <%= s.menu_sub do %>
+                        <%= s.menu_sub_item do %>
+                          <%= s.menu_sub_button "Playground", docs_sidebar_playground_path %>
+                        <% end %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= s.footer do %>
+          <div class="px-2 py-1.5 text-xs text-muted-foreground">
+            v0.2 · MIT
+          </div>
+        <% end %>
+      <% end %>
+
+      <%= s.inset do %>
+        <%= s.inset_header do %>
+          <%= s.trigger %>
+          <%= sui.breadcrumb do |bc| %>
+            <%= bc.list do %>
+              <%= bc.item do %>
+                <%= bc.link "Home", root_path %>
+              <% end %>
+              <%= bc.separator %>
+              <%= bc.item do %>
+                <%= bc.link "Docs", docs_path %>
+              <% end %>
+              <% if @component %>
+                <%= bc.separator %>
+                <%= bc.item do %>
+                  <%= bc.page @component.titleize %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <div class="ml-auto flex items-center gap-3">
+            <%= link_to "Blocks", blocks_path, class: "text-sm text-muted-foreground hover:text-foreground" %>
+<%= style_switcher styles: shadcnrb_style_options %>
+<%= sui.button variant: :ghost, size: :"icon-sm", "aria-label": "Toggle full width", data: { action: "click->docs-width#toggle" } do %>
+  <%= sui.icon :"maximize-2", data: { docs_width_target: "expand" }, hidden: docs_full_width? %>
+  <%= sui.icon :"minimize-2", data: { docs_width_target: "collapse" }, hidden: !docs_full_width? %>
+<% end %>
+<%= sui.theme_switcher %>
+          </div>
+        <% end %>
+
+        <%= s.inset_content do %>
+          <div id="docs-content" data-docs-width-target="content" class="px-6 py-10 w-full space-y-8 <%= "max-w-4xl mx-auto" unless docs_full_width? %>">
+            <%= yield %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+    <style>
+      #docs-content :is(h1, h2, h3, h4) { position: relative; scroll-margin-top: 5rem; }
+      #docs-content :is(h1, h2, h3, h4) > .heading-anchor {
+        position: absolute; left: -1.25rem; top: 0; bottom: 0; display: inline-flex;
+        align-items: center; color: var(--color-muted-foreground);
+        opacity: 0; transition: opacity 120ms; text-decoration: none;
+        cursor: pointer;
+      }
+      #docs-content :is(h1, h2, h3, h4):hover > .heading-anchor,
+      #docs-content .heading-anchor:focus { opacity: 1; }
+    </style>
+    <script type="module">
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const headings = document.querySelectorAll('#docs-content :is(h1, h2, h3, h4)');
+      for (const h of headings) {
+        if (!h.textContent.trim()) continue;
+        if (!h.id) h.id = slug(h.textContent);
+        const a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.className = 'heading-anchor';
+        a.setAttribute('aria-label', 'Permalink to ' + h.textContent.trim());
+        a.textContent = '#';
+        h.prepend(a);
+      }
+      // Hash-in-URL on load: scroll-margin-top handles offset; jump manually
+      // since the headings only got ids after DOM-ready.
+      if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+    </script>
+  </body>
+</html>

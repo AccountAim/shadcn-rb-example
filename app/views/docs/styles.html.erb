@@ -1,0 +1,100 @@
+<% content_for :title, "Styles — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Styles" %>
+    <%= sui.lead do %>
+      A <strong>style</strong> swaps the Tailwind class strings each component
+      returns. Themes change colors via CSS tokens; styles change structure —
+      border thickness, corner radius, shadow offset, typography.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Declaring a style" %>
+    <%= sui.p do %>
+      Put override classes under <%= sui.code "Shadcnrb::Styles::<Name>" %> —
+      one per component, named after the component module. Each overrides
+      whichever methods on the parent <%= sui.code "Style" %> class it wants
+      to change.
+    <% end %>
+    <% code = <<~RUBY
+      # app/components/shadcnrb/styles/brutalist.rb
+      module Shadcnrb::Styles::Brutalist
+        class Button < Shadcnrb::Button::Style
+          def base
+            "inline-flex items-center justify-center rounded-none border-2 border-black " \\
+              "font-bold uppercase tracking-wide shadow-[4px_4px_0_0_#000]"
+          end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code, syntax: :ruby %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Applying a style" %>
+    <% code = <<~RUBY
+      Shadcnrb::Style.apply(:brutalist)   # flip the look
+      Shadcnrb::Style.reset               # back to defaults
+    RUBY
+    %>
+    <%= sui.codeblock code, syntax: :ruby %>
+    <%= sui.p do %>
+      <%= sui.code "apply" %> resets first, then finds each override class by
+      name and assigns a new instance to the matching component. No
+      <%= sui.code "apply!" %> boilerplate, no COMPONENTS hash — just the
+      class definitions.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Per-request application" %>
+    <%= sui.p do %>
+      Styles are server-side global state. Apply the active one in a
+      <%= sui.code "before_action" %> so each request renders with the right
+      classes:
+    <% end %>
+    <% code = <<~RUBY
+      class ApplicationController < ActionController::Base
+        before_action :apply_shadcnrb_style
+
+        private
+
+        def apply_shadcnrb_style
+          Shadcnrb::Style.apply(cookies[:shadcnrb_style])
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code, syntax: :ruby %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Reference implementation" %>
+    <%= sui.p do %>
+      This example app ships
+      <%= sui.code "Shadcnrb::Styles::Neobrutalism" %> covering every visual
+      component. Pick <strong>Neobrutalism</strong> in the style switcher at
+      the top of the page to see it live, or read the full source at
+      <%= sui.link_to "app/components/shadcnrb/styles/neobrutalism.rb",
+                      "https://github.com/AccountAim/shadcn-rb-example/blob/main/app/components/shadcnrb/styles/neobrutalism.rb",
+                      variant: :underline, target: "_blank" %>.
+    <% end %>
+    <%= sui.p do %>
+      Pair with a user-facing picker — see
+      <%= sui.link_to "StyleSwitcherHelper",
+                      "https://github.com/AccountAim/shadcn-rb-example/blob/main/app/helpers/style_switcher_helper.rb",
+                      variant: :underline, target: "_blank" %>
+      and its
+      <%= sui.link_to "Stimulus controller",
+                      "https://github.com/AccountAim/shadcn-rb-example/blob/main/app/javascript/controllers/style_switcher_controller.js",
+                      variant: :underline, target: "_blank" %>
+      in this repo. The pick is a cookie written client-side plus a reload —
+      no POST, so it keeps working on pages served without a session.
+    <% end %>
+  </div>
+</div>

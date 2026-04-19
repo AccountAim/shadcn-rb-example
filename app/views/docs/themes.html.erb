@@ -1,0 +1,66 @@
+<% content_for :title, "Themes — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Themes & dark mode" %>
+    <%= sui.lead do %>
+      Colors live as oklch CSS tokens — base palette in
+      <%= sui.code "app/assets/tailwind/application.css" %>, preset themes
+      in <%= sui.code "shadcnrb_themes.css" %>. Components carry no inline
+      <%= sui.code "dark:" %> utilities; everything flips at the token
+      layer.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "How it works" %>
+    <ul class="list-disc list-inside space-y-1 text-sm leading-relaxed">
+      <li><strong>Dark mode</strong> — <%= sui.code ".dark { … }" %> flips the tokens.</li>
+      <li><strong>Named themes</strong> — six preset palettes (<%= sui.code "blue" %>, <%= sui.code "green" %>, <%= sui.code "rose" %>, <%= sui.code "violet" %>, <%= sui.code "orange" %>, plus neutral zinc) as <%= sui.code ".sui-theme-<name>" %> classes overriding <%= sui.code "--color-primary" %>, <%= sui.code "--color-primary-foreground" %>, <%= sui.code "--color-ring" %>.</li>
+      <li><strong>Combine</strong> — <%= sui.code '<html class="dark sui-theme-blue">' %>.</li>
+    </ul>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Theme switcher" %>
+    <%= sui.p do %>
+      <%= sui.code "sui.theme_switcher" %> is a dropdown that toggles both
+      theme and mode, persisted in a cookie the server renders (or on your
+      backend — see <%= link_to "State persistence", docs_persistence_path, class: "underline underline-offset-4 font-medium" %>):
+    <% end %>
+    <%= sui.codeblock DocsHelper::THEME_SWITCHER_SNIPPET, syntax: :erb %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Adding your own theme" %>
+    <%= sui.p do %>
+      Edit <%= sui.code "shadcnrb_themes.css" %>:
+    <% end %>
+    <% code = <<~CSS
+      .sui-theme-brand      { --color-primary: oklch(0.6 0.2 320);  /* … */ }
+      .dark.sui-theme-brand { --color-primary: oklch(0.75 0.18 320); /* … */ }
+    CSS
+    %>
+    <%= sui.codeblock code, syntax: :css %>
+    <%= sui.p do %>
+      Then register the name with the switcher:
+    <% end %>
+    <%= sui.codeblock DocsHelper::THEME_SWITCHER_REGISTER_SNIPPET, syntax: :erb %>
+    <%= sui.p do %>
+      Keep theme rules limited to <%= sui.code "primary" %> / <%= sui.code "ring" %>
+      tokens so background, border, and surface colors stay neutral across
+      themes. Broader recolors belong in <%= sui.code "application.css" %>.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Removing presets" %>
+    <%= sui.p do %>
+      Delete the <%= sui.code '@import "./shadcnrb_themes.css";' %> line in
+      <%= sui.code "application.css" %> (or delete the file outright) — the
+      base neutral palette keeps working unchanged.
+    <% end %>
+  </div>
+</div>

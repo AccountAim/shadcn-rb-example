@@ -1,0 +1,66 @@
+<% content_for :title, "Typography — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Typography" %>
+    <%= sui.lead "Prose helpers — headings, paragraphs, lead copy, muted text, inline code. Each wraps the semantic HTML tag with a tuned Tailwind class string." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "typography" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Headings" %>
+    <%= live_example do %>
+      <div class="space-y-2">
+        <%= sui.h1 "Heading 1" %>
+        <%= sui.h2 "Heading 2" %>
+        <%= sui.h3 "Heading 3" %>
+        <%= sui.h4 "Heading 4" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Body text" %>
+    <%= live_example do %>
+      <div class="space-y-2 max-w-prose">
+        <%= sui.lead "Lead text — larger, muted. Good for page descriptions under an h1." %>
+        <%= sui.p do %>
+          Default paragraph. Use inside <%= sui.code "sui.p" %> for inline
+          <%= sui.code "sui.code" %> formatting and <%= sui.link_to "links", "#" %>.
+        <% end %>
+        <%= sui.muted "Muted text — for annotations, timestamps, secondary info." %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Inline code" %>
+    <%= sui.muted "`sui.code` wraps short strings — command names, class names, symbols — in a rounded monospaced chip." %>
+    <%= live_example do %>
+      <%= sui.p do %>
+        Install with <%= sui.code "bin/rails g shadcnrb:install" %>, then run
+        <%= sui.code "bundle install" %>.
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Tag Purpose], rows: [
+      ["h1", "h1", "Page-level heading"],
+      ["h2", "h2", "Section heading"],
+      ["h3", "h3", "Subsection heading"],
+      ["h4", "h4", "Minor heading"],
+      ["p", "p", "Paragraph"],
+      ["lead", "p", "Larger lead copy under a heading"],
+      ["muted", "p", "Muted / secondary text"],
+      ["code", "code", "Inline monospaced chip"],
+    ].map { |name, tag, purpose| ["<code>sui.#{name}</code>", "<code>&lt;#{tag}&gt;</code>", purpose] } %>
+  </div>
+</div>

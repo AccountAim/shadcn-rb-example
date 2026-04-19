@@ -1,0 +1,98 @@
+<% content_for :title, "Button Group — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Button Group" %>
+    <%= sui.lead "Merges a row or column of buttons into a single connected control by removing the inner border radius and borders." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "button_group" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Wrap any number of <%= sui.code "sui.button" %> elements inside <%= sui.code "sui.button_group" %>. The default orientation is horizontal.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button_group do %>
+        <%= sui.button "Previous", variant: :outline %>
+        <%= sui.button "Page 1",   variant: :outline %>
+        <%= sui.button "Next",     variant: :outline %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Vertical orientation" %>
+    <%= sui.muted do %>
+      Set <%= sui.code "orientation: :vertical" %> to stack the buttons.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button_group orientation: :vertical do %>
+        <%= sui.button "Top",    variant: :outline %>
+        <%= sui.button "Middle", variant: :outline %>
+        <%= sui.button "Bottom", variant: :outline %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With text label" %>
+    <%= sui.muted do %>
+      <%= sui.code "button_group_text" %> renders a non-interactive label styled to match the group height.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.button_group do |g| %>
+        <%= g.text "Sort by", icon: :"chevrons-up-down" %>
+        <%= sui.button "Name",   variant: :outline, icon: :"chevron-down" %>
+        <%= sui.button "Date",   variant: :outline, icon: :"chevrons-up-down" %>
+        <%= sui.button "Status", variant: :outline, icon: :"chevrons-up-down" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Split button" %>
+    <%= sui.muted do %>
+      Combine <%= sui.code "button_group" %> + <%= sui.code "dropdown_menu" %> to build a primary
+      action with an attached menu. No new component needed — just compose the existing primitives.
+    <% end %>
+
+    <%= live_example do %>
+      <%= sui.dropdown_menu do |m| %>
+        <%= m.trigger do %>
+          <%= sui.button_group do %>
+            <%= sui.button "Save" %>
+            <%# The marker scopes the wrapper's click-to-toggle to this button,
+                so "Save" stays an independent action. %>
+            <%= sui.button size: :icon, "aria-label": "More save options",
+                  data: { slot: "dropdown-menu-trigger" } do %>
+              <%= sui.icon(:"chevron-down") %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <%= m.item "Save and exit" %>
+        <%= m.item "Save as draft" %>
+        <%= m.separator %>
+        <%= m.item "Discard changes" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table rows: [
+      ["<code>sui.button_group</code>", "<code>orientation:</code>", "<code>:horizontal</code>", "Container that connects children. Yields a <code>g</code> proxy. <code>orientation:</code> is <code>:horizontal</code> or <code>:vertical</code>."],
+      ["<code>g.separator</code>",      "—",                         "—",                        "Thin visual divider between items, rendered as a <code>&lt;div&gt;</code> with input-border color."],
+      ["<code>g.text(name)</code>",     "—",                         "—",                        "Static label element styled to blend with the button group. Accepts a string or block."],
+    ] %>
+  </div>
+</div>

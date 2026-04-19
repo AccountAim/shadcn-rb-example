@@ -1,6 +1,10 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # Component controllers live outside app/javascript; without this the
+  # importmap keeps their old digests after a component reinstall.
+  config.importmap.cache_sweepers << Rails.root.join("app/components/shadcnrb")
+
   config.enable_reloading = true
   config.eager_load = false
   config.consider_all_requests_local = true

@@ -1,0 +1,79 @@
+<% content_for :title, "Input — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Input" %>
+    <%= sui.lead do %>
+      A single-line text field. Thin wrapper around the HTML <%= sui.code "<input>" %> element with consistent styling.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "input" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+
+    <%= live_example do %>
+      <div class="w-[320px]">
+        <%= sui.input placeholder: "Type something…" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Disabled</h3>
+    <%= live_example do %>
+      <div class="w-[320px]">
+        <%= sui.input placeholder: "Disabled", disabled: true %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Types</h3>
+    <%= live_example do %>
+      <div class="flex flex-col gap-3 w-[320px]">
+        <%= sui.input type: "email", placeholder: "you@example.com" %>
+        <%= sui.input type: "password", placeholder: "••••••••" %>
+        <%= sui.input type: "number", placeholder: "42" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">With label</h3>
+    <%= live_example do %>
+      <div class="space-y-2 w-[320px]">
+        <%= sui.label "Email", for_id: "email" %>
+        <%= sui.input type: "email", id: "email", placeholder: "you@example.com" %>
+      </div>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Full form field pattern</h3>
+    <%= live_example do %>
+      <div class="space-y-4 w-[320px]">
+        <div class="space-y-2">
+          <%= sui.label "Username", for_id: "username" %>
+          <%= sui.input id: "username", placeholder: "johndoe" %>
+        </div>
+        <div class="space-y-2">
+          <%= sui.label "Password", for_id: "password" %>
+          <%= sui.input type: "password", id: "password", placeholder: "••••••••" %>
+        </div>
+        <%= sui.button "Sign in", class: "w-full" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[name type default description], rows: [
+      ["<code>type</code>", "String", "<code>\"text\"</code>", "HTML input type. Any valid value: <code>email</code>, <code>password</code>, <code>number</code>, <code>file</code>, etc."],
+      ["<code>placeholder</code>", "String", "<code>nil</code>", "Placeholder text shown when the field is empty."],
+      ["<code>disabled</code>", "Boolean", "<code>false</code>", "Disables the field; applies muted styling via <code>disabled:opacity-50</code>."],
+      ["<code>id</code>", "String", "<code>nil</code>", "Sets the element id; used with <code>sui.label for_id:</code> to link label and input."],
+      ["<code>**opts</code>", "Hash", "—", "Any additional HTML attribute (<code>name</code>, <code>value</code>, <code>autofocus</code>, <code>data-*</code>, …)."],
+    ] %>
+  </div>
+</div>

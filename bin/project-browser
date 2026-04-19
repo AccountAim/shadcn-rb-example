@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+project_root="$(git -C "$(dirname "${BASH_SOURCE[0]}")/.." rev-parse --show-toplevel)"
+project_name="$(basename "$project_root")"
+project_hash="$(printf %s "$project_root" | sha256sum | cut -c1-8)"
+
+export AGENT_BROWSER_SESSION="${project_name}-${project_hash}"
+export AGENT_BROWSER_HEADED=true
+export AGENT_BROWSER_CONFIG="$project_root/bin/agent-browser.json"
+
+# Moves this session's browser window to the workspace of the terminal this
+# script runs in. One nested function per compositor+terminal combo.
+move_browser_to_invoking_workspace() {
+  niri_alacritty() {
+    # Zellij/tmux shells inherit ALACRITTY_SOCKET from the terminal that
+    # started the server.
+    local chrome_pid="$1" terminal_pid windows workspace_id window_id
+    terminal_pid="${ALACRITTY_SOCKET##*-}"
+    terminal_pid="${terminal_pid%.sock}"
+
+    windows="$(niri msg --json windows)"
+    workspace_id="$(jq --argjson pid "$terminal_pid" '.[] | select(.pid == $pid) | .workspace_id' <<<"$windows")"
+    [[ -n "$workspace_id" ]] || return 0
+    window_id="$(jq --argjson pid "$chrome_pid" --argjson ws "$workspace_id" '.[] | select(.pid == $pid and .workspace_id != $ws) | .id' <<<"$windows")"
+    [[ -n "$window_id" ]] || return 0
+
+    niri msg action move-window-to-workspace --window-id "$window_id" --focus false \
+      "$(niri msg --json workspaces | jq -r --argjson id "$workspace_id" '.[] | select(.id == $id) | .name // .idx')"
+  }
+
+  local daemon chrome_pid
+  daemon="$(pgrep --env "AGENT_BROWSER_SESSION=$AGENT_BROWSER_SESSION" -f agent-browser-linux)" || return 0
+  chrome_pid="$(pgrep -P "$daemon" -x chrome)" || return 0
+
+  if [[ -n "${NIRI_SOCKET:-}" && -n "${ALACRITTY_SOCKET:-}" ]]; then
+    niri_alacritty "$chrome_pid"
+  fi
+}
+
+open_browser() {
+  agent-browser open "$@" || return $?
+  move_browser_to_invoking_workspace || true
+}
+
+wait_until_chat_idle() {
+  local timeout_seconds="$1"
+  local failure="$2"
+  local deadline=$((SECONDS + timeout_seconds))
+
+  while ((SECONDS < deadline)); do
+    if command timeout --kill-after=1s "$((deadline - SECONDS))s" agent-browser wait "[data-agent-chat]:not([aria-busy])" 2>&1 | grep -q Done
+    then
+      return
+    fi
+  done
+
+  echo "$failure" >&2
+  return 124
+}
+
+case "${1:-}" in
+  open)
+    shift
+    open_browser "$@"
+    ;;
+  busy-wait)
+    shift
+    timeout=60
+    case "${1:-}" in
+      --timeout=*) timeout="${1#*=}"; shift ;;
+      --timeout) timeout="$2"; shift 2 ;;
+    esac
+
+    if [[ "$#" -ne 0 ]]; then
+      echo "usage: bin/project-browser busy-wait [--timeout SECONDS]" >&2
+      exit 2
+    fi
+
+    wait_until_chat_idle "$timeout" "busy-wait timed out after ${timeout}s"
+    echo Done
+    ;;
+  close)
+    if [[ "$#" -ne 1 ]]; then
+      echo "usage: bin/project-browser close" >&2
+      exit 2
+    fi
+
+    exec agent-browser close
+    ;;
+  *)
+    exec agent-browser "$@"
+    ;;
+esac

@@ -1,0 +1,142 @@
+<% content_for :title, "Toast — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Toast" %>
+    <%= sui.lead "Transient notification messages that appear briefly and dismiss themselves. One sui.toaster in the layout owns the container, like sonner's <Toaster />." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "toast" %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "How it works" %>
+    <%= sui.muted do %>
+      Drop <%= sui.code "sui.toaster" %> in your layout once. It renders the positioned
+      container, any pending flash messages, and a <%= sui.code "<template>" %> per variant.
+      Wrap any trigger element with <%= sui.code "sui.toast_trigger" %>: on click the
+      <%= sui.code "shadcnrb--toast--trigger" %> controller clones the template for its variant,
+      so JS-created toasts share the server markup and your <%= sui.code "style.rb" %> overrides.
+    <% end %>
+    <% toaster_code = <<~RUBY
+      # In app/views/layouts/application.html.erb
+      sui.toaster position: "bottom-right"
+    RUBY
+    %>
+    <%= sui.codeblock toaster_code, syntax: :ruby %>
+    <%= sui.muted do %>
+      <%= sui.code "position:" %> takes sonner's six corners —
+      <%= sui.code "top-left" %>, <%= sui.code "top-center" %>, <%= sui.code "top-right" %>
+      (default), <%= sui.code "bottom-left" %>, <%= sui.code "bottom-center" %>,
+      <%= sui.code "bottom-right" %>. Unanchored, server-driven overlays (streamed dialogs,
+      drawers) land in the sibling <%= sui.code "sui.overlay_outlet" %>.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Basic toast</h3>
+    <%= live_example do %>
+      <%= sui.toast_trigger title: "Saved", description: "Your changes have been saved." do %>
+        <%= sui.button "Show Toast", variant: :outline %>
+      <% end %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Destructive variant</h3>
+    <%= sui.muted do %>
+      Use <%= sui.code "variant: :destructive" %> for
+      error or warning messages. Each variant has a leading icon, defined in
+      <%= sui.code "style.rb" %> under <%= sui.code "icons" %> so an app can retint or drop them.
+    <% end %>
+    <%= live_example do %>
+      <%= sui.toast_trigger title: "Error", description: "Something went wrong.", variant: :destructive do %>
+        <%= sui.button "Show Error Toast", variant: :destructive %>
+      <% end %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Custom duration</h3>
+    <%= sui.muted do %>
+      Pass <%= sui.code "duration:" %> in milliseconds.
+      The default is 5000 ms.
+    <% end %>
+    <%= live_example do %>
+      <%= sui.toast_trigger title: "Lingering notice", description: "Visible for 10 seconds.", duration: 10000 do %>
+        <%= sui.button "Show Long Toast", variant: :secondary %>
+      <% end %>
+    <% end %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Static server-rendered toast</h3>
+    <%= sui.muted do %>
+      <%= sui.code "sui.toast" %> renders a static toast
+      element directly into the DOM — icon, title, description, and a close button. This is the
+      rarer use case; prefer <%= sui.code "toast_trigger" %> for interactive flows.
+    <% end %>
+    <%= live_example do %>
+      <div class="w-[320px]">
+        <%= sui.toast "File uploaded", description: "avatar.png has been saved." %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Flash integration" %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Flash toasts</h3>
+    <%= sui.muted do %>
+      <%= sui.code "sui.toaster" %> renders pending Rails flash messages as toasts.
+      <%= sui.code ":alert" %> and
+      <%= sui.code ":error" %> map to
+      <%= sui.code ":destructive" %>;
+      everything else uses <%= sui.code ":default" %>.
+      <%= sui.code "sui.flash_toasts" %> is the bare helper if you render the container yourself.
+    <% end %>
+    <% flash_code = <<~RUBY
+      # In a controller:
+      redirect_to root_path, notice: "Saved successfully."
+    RUBY
+    %>
+    <%= sui.codeblock flash_code, syntax: :ruby %>
+
+    <h3 class="text-lg font-medium tracking-tight pt-2">Turbo Stream</h3>
+    <%= sui.muted do %>
+      Use <%= sui.code "sui.toast_stream" %> to append
+      a toast from a Turbo Stream response. Targets the toaster's
+      <%= sui.code "#shadcnrb-toasts" %> container.
+    <% end %>
+    <% stream_code = <<~RUBY
+      # In a controller
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: sui.toast_stream("Saved", variant: :default) }
+      end
+    RUBY
+    %>
+    <%= sui.codeblock stream_code, syntax: :ruby %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[method param type default description], rows: [
+      ["<code>toaster</code>", "<code>position:</code>", "String", "<code>\"top-right\"</code>", "Corner the container is fixed to — one of sonner's six positions."],
+      ["<code>toaster</code>", "<code>**opts</code>", "Hash", "—", "Container attributes; <code>id</code> defaults to <code>shadcnrb-toasts</code>."],
+      ["<code>toast_trigger</code>", "<code>title:</code>", "String", "—", "Required. Bold heading shown at the top of the toast."],
+      ["<code>toast_trigger</code>", "<code>description:</code>", "String", "<code>nil</code>", "Optional secondary text below the title."],
+      ["<code>toast_trigger</code>", "<code>variant:</code>", "Symbol", "<code>:default</code>", "Visual style — <code>:default</code> or <code>:destructive</code>."],
+      ["<code>toast_trigger</code>", "<code>duration:</code>", "Integer", "<code>5000</code>", "Auto-dismiss delay in milliseconds."],
+      ["<code>toast</code>", "<code>title</code>", "String", "<code>nil</code>", "Positional heading. Pass a string or use a block for custom content."],
+      ["<code>toast</code>", "<code>description:</code>", "String", "<code>nil</code>", "Secondary text rendered below the title."],
+      ["<code>toast</code>", "<code>variant:</code>", "Symbol", "<code>:default</code>", "Visual style — <code>:default</code> or <code>:destructive</code>."],
+      ["<code>overlay_outlet</code>", "—", "—", "—", "Empty append target (<code>#shadcnrb-overlays</code>) for streamed dialogs and drawers."],
+    ] %>
+  </div>
+</div>

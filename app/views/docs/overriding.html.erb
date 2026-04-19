@@ -1,0 +1,65 @@
+<% content_for :title, "Overriding a component — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Overriding a component" %>
+    <%= sui.lead do %>
+      After install you own every file under <%= sui.code "app/components/shadcnrb/" %>.
+      Edit freely — this is the shadcn philosophy. For one-off tweaks, reach
+      for a style class override; for a site-wide alternate look, build a
+      <%= sui.link_to "named style", docs_styles_path, variant: :underline %>.
+    <% end %>
+  </div>
+
+  <%= sui.separator %>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Adding a variant" %>
+    <%= sui.p do %>
+      Each component's <%= sui.code "Style" %> class returns its variant
+      lookup table. Add a key and it's available via <%= sui.code "variant:" %>:
+    <% end %>
+    <% code = <<~RUBY
+      # app/components/shadcnrb/button/style.rb
+      module Shadcnrb
+        module Button
+          class Style
+            def variants
+              {
+                default:         "bg-primary text-primary-foreground ...",
+                destructive:     "bg-destructive text-destructive-foreground ...",
+                outline:         "border border-input bg-background ...",
+                outline_primary: "border border-primary text-primary hover:bg-primary/10",
+                ghost:           "hover:bg-accent hover:text-accent-foreground"
+              }
+            end
+          end
+        end
+      end
+    RUBY
+    %>
+    <%= sui.codeblock code, syntax: :ruby %>
+    <%= sui.codeblock DocsHelper::OVERRIDING_VARIANT_USE_SNIPPET, syntax: :erb %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Rewriting the markup" %>
+    <%= sui.p do %>
+      For anything beyond class strings — a different element tree, new
+      attributes, extra slots — edit <%= sui.code "component.rb" %> directly.
+      The file is yours; the gem only re-copies it on
+      <%= sui.code "shadcnrb:install --force" %>.
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "When to use a style instead" %>
+    <%= sui.p do %>
+      An ad-hoc variant or copy tweak stays in the component's own
+      <%= sui.code "Style" %> class. When you want a whole alternate look —
+      rounded-none + thick borders + shadow offsets — reach for a
+      <%= sui.link_to "named style module", docs_styles_path, variant: :underline %>
+      so it's toggleable and lives alongside the default.
+    <% end %>
+  </div>
+</div>

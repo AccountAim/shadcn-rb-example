@@ -1,0 +1,191 @@
+<% content_for :title, "Table — shadcnrb" %>
+
+<div class="space-y-8">
+  <div class="space-y-2">
+    <%= sui.h1 "Table" %>
+    <%= sui.lead "A responsive, accessible table. Wraps native <table> semantics with shadcn styling." %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Installation" %>
+    <%= install_block "table" %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Usage" %>
+    <%= sui.muted do %>
+      Compose <%= sui.code "sui.table do |t|" %> with <%= sui.code "t.header" %>, <%= sui.code "t.body" %>,
+      <%= sui.code "t.row" %>, <%= sui.code "t.head" %>, <%= sui.code "t.cell" %>.
+      Wrap in a <%= sui.code "card" %> for the bordered look, or leave plain.
+    <% end %>
+
+    <%= live_example frame: false do %>
+      <div class="overflow-hidden rounded-lg border">
+        <%= sui.table do |t| %>
+          <%= t.header do %>
+            <%= t.row do %>
+              <%= t.head "Invoice" %>
+              <%= t.head "Status" %>
+              <%= t.head "Method" %>
+              <%= t.head "Amount", class: "text-right" %>
+            <% end %>
+          <% end %>
+          <%= t.body do %>
+            <% [
+              {id: "INV001", status: "Paid",    method: "Credit Card",    amount: "$250.00"},
+              {id: "INV002", status: "Pending", method: "PayPal",         amount: "$150.00"},
+              {id: "INV003", status: "Unpaid",  method: "Bank Transfer",  amount: "$350.00"}
+            ].each do |inv| %>
+              <%= t.row do %>
+                <%= t.cell inv[:id], class: "font-medium" %>
+                <%= t.cell do %>
+                  <%= sui.badge inv[:status], variant: (inv[:status] == "Paid" ? :default : :secondary) %>
+                <% end %>
+                <%= t.cell inv[:method] %>
+                <%= t.cell inv[:amount], class: "text-right" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "With caption and footer" %>
+
+    <%= live_example frame: false do %>
+      <div class="overflow-hidden rounded-lg border">
+        <%= sui.table do |t| %>
+          <%= t.caption "A list of your recent invoices." %>
+          <%= t.header do %>
+            <%= t.row do %>
+              <%= t.head "Invoice" %>
+              <%= t.head "Amount", class: "text-right" %>
+            <% end %>
+          <% end %>
+          <%= t.body do %>
+            <%= t.row { t.cell("INV001") + t.cell("$250.00", class: "text-right") } %>
+            <%= t.row { t.cell("INV002") + t.cell("$150.00", class: "text-right") } %>
+          <% end %>
+          <%= t.footer do %>
+            <%= t.row do %>
+              <%= t.cell "Total" %>
+              <%= t.cell "$400.00", class: "text-right" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Lazy-loaded rows" %>
+    <%= sui.muted do %>
+      Rows that arrive after the page: the body starts with a single
+      <%= sui.code "colspan" %> placeholder row, and a Turbo Frame beside the
+      table fetches a stream that replaces the <%= sui.code "tbody" %>. A
+      <%= sui.code "turbo-frame" %> can't sit inside a table, which is why the
+      frame stays outside and carries a <%= sui.code "turbo-stream" %>. The
+      fixed header keeps its natural layout while the placeholder shows —
+      widths are only measured against a row with one cell per heading — and
+      realigns when the rows land. The partial reaches
+      <%= sui.code "t.body" %> and friends through <%= sui.code "sui.table_proxy" %>.
+    <% end %>
+
+    <%= live_example frame: false do %>
+      <div class="h-64 overflow-hidden rounded-lg border">
+        <%= sui.table fixed_header: true do |t| %>
+          <%= t.header do %>
+            <%= t.row do %>
+              <%= t.head "Invoice" %>
+              <%= t.head "Status" %>
+              <%= t.head "Method" %>
+              <%= t.head "Amount", class: "text-right" %>
+            <% end %>
+          <% end %>
+          <%= t.body id: "lazy-invoices" do %>
+            <%= t.row do %>
+              <%= t.cell "Loading…", colspan: 4, class: "text-center text-muted-foreground animate-pulse" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+      <turbo-frame id="lazy-invoices-frame" src="<%= lazy_table_rows_path %>"></turbo-frame>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Fixed header" %>
+    <%= sui.muted do %>
+      <%= sui.code "fixed_header: true" %> keeps the header in place while the rows scroll inside
+      a bounded box. The header and body render as two tables — the header outside the scroll
+      container — and a small Stimulus controller keeps their column widths and horizontal
+      scroll in step, so the scrollbar sits beside the rows only. Give the box a height.
+    <% end %>
+
+    <%= live_example frame: false do %>
+      <div class="h-64 overflow-hidden rounded-lg border">
+        <%= sui.table fixed_header: true do |t| %>
+          <%= t.header do %>
+            <%= t.row do %>
+              <%= t.head "Invoice" %>
+              <%= t.head "Status" %>
+              <%= t.head "Method" %>
+              <%= t.head "Amount", class: "text-right" %>
+            <% end %>
+          <% end %>
+          <%= t.body do %>
+            <% 1.upto(20) do |i| %>
+              <%= t.row do %>
+                <%= t.cell "INV#{i.to_s.rjust(3, '0')}", class: "font-medium" %>
+                <%= t.cell i.odd? ? "Paid" : "Pending" %>
+                <%= t.cell i % 3 == 0 ? "Bank Transfer" : "Credit Card" %>
+                <%= t.cell "$#{i * 50}.00", class: "text-right" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "Sizes" %>
+    <%= sui.muted do %>
+      <%= sui.code "size: :lg" %> relaxes row height and padding for index-style lists; data
+      grids keep the dense default. The size is set as <%= sui.code "data-size" %> on the table
+      and applied through descendant selectors, so <%= sui.code "t.head" %> and
+      <%= sui.code "t.cell" %> stay size-agnostic.
+    <% end %>
+
+    <%= live_example frame: false do %>
+      <div class="overflow-hidden rounded-lg border">
+        <%= sui.table size: :lg do |t| %>
+          <%= t.header do %>
+            <%= t.row do %>
+              <%= t.head "Name" %>
+              <%= t.head "Role" %>
+            <% end %>
+          <% end %>
+          <%= t.body do %>
+            <%= t.row { t.cell("Ada Lovelace", class: "font-medium") + t.cell("Engineer") } %>
+            <%= t.row { t.cell("Grace Hopper", class: "font-medium") + t.cell("Admiral") } %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-3">
+    <%= sui.h2 "API" %>
+    <%= api_table headers: %w[Method Renders Notes], rows: [
+      ["<code>sui.table</code>",                 "<code>&lt;table&gt;</code>",                                 "Wrapped in an <code>overflow-x-auto</code> div for horizontal scroll; yields a <code>t</code> proxy. <code>fixed_header: true</code> splits header and body into two tables kept in step by <code>shadcnrb--table--component</code>; <code>size:</code> is <code>:default</code> or <code>:lg</code>."],
+      ["<code>t.header / body / footer</code>",  "<code>&lt;thead&gt; / &lt;tbody&gt; / &lt;tfoot&gt;</code>", "Footer gets a top border + muted bg. The header part (<code>thead</code>, or the header container in fixed mode) is <code>data-slot=\"table-header\"</code> and draws the header rule; the body part is <code>table-body</code>."],
+      ["<code>t.row</code>",                     "<code>&lt;tr&gt;</code>",                                   "Hover highlight, supports <code>data-state=\"selected\"</code>."],
+      ["<code>t.head</code>",                    "<code>&lt;th&gt;</code>",                                   "Muted foreground, left-aligned by default."],
+      ["<code>t.cell</code>",                    "<code>&lt;td&gt;</code>",                                   "First arg or block for content."],
+      ["<code>t.caption</code>",                 "<code>&lt;caption&gt;</code>",                              "Renders below the table (CSS caption-bottom)."],
+    ] %>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<% content_for :title, "Blocks — shadcnrb" %>
+
+<%= sui.layout.container size: :lg, class: "py-12" do %>
+  <%= sui.layout.stack gap: 8 do %>
+    <%= sui.layout.stack gap: 2 do %>
+      <%= sui.h1 "Blocks" %>
+      <%= sui.lead "Prebuilt, copy-paste-ready examples composed from shadcnrb primitives. Open one for the full source." %>
+    <% end %>
+
+    <%= sui.layout.grid cols: 1, gap: 6, class: "md:grid-cols-2 lg:grid-cols-3" do %>
+      <% @blocks.each do |b| %>
+        <%= link_to block_path(b[:id]), class: "group" do %>
+          <%= sui.card(class: "p-6 transition-colors group-hover:border-foreground/30 h-full") do %>
+            <%= sui.layout.stack gap: 3 do %>
+              <%= sui.h3 b[:name], class: "!text-base !font-semibold" %>
+              <%= sui.muted { b[:description] } %>
+              <span class="text-sm text-primary">View →</span>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
