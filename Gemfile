@@ -17,4 +17,13 @@ end
 group :development do
   gem "web-console"
   gem "foreman"
+  # Generators-only, so `:development`. `:branch` is required by the dev-container local-gem override (see compose.yaml).
+  gem "shadcn-rb", git: "https://github.com/AccountAim/shadcn-rb.git", branch: "main"
 end
+
+gem "tailwind_merge", "~> 1.4"
+
+# Demo content deps: rouge for the codeblock component's syntax highlighting;
+# method_source for the docs_helper's ERB source extraction.
+gem "rouge", "~> 4.7"
+gem "method_source", "~> 1.1"
